@@ -18,57 +18,57 @@
 
 ## ⚡ 一句话安装
 
-把下面这一整段复制给你的 Agent（Claude Code / Cursor / DSH / 任意支持 MCP 的客户端），剩下的它自己会做完：
+把这一整段复制给你的 Agent（Claude Code / Cursor / DSH / 任意能干活的客户端），剩下的它自己做完：
 
 ```text
-帮我安装并接入 doubao-remote（https://github.com/JimmyWangJimmy/doubao-remote）。
-步骤：1) 克隆到 ~/Github/doubao-remote；2) 若豆包没带调试端口，执行
-open -a Doubao --args --remote-debugging-port=9333，并确认 curl -s 127.0.0.1:9333/json/version 有返回；
-3) 在后台跑 node src/server.js（MCP 端点 http://127.0.0.1:18812/mcp，Node >= 21，零依赖）；
-4) 把该端点按 streamable-http 注册成名为 doubao-desktop 的 MCP；
-5) 用 doubao_desktop_status 验证已连上，不要跳过这步；有问题按 README 的「故障速查」处理。
+帮我装好「豆包遥控器」并按它的说明直接使唤豆包：https://github.com/JimmyWangJimmy/doubao-remote
+1) 安装（raw 拉不下来就走 git 回退，两条都试）：
+   curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh | bash
+   或  git clone https://github.com/JimmyWangJimmy/doubao-remote.git && bash doubao-remote/install.sh
+2) 运行 doubao status，必须返回 "ok": true；不正常就按仓库 README 的「故障速查」修到能用为止
+3) 把仓库里的 skills/doubao-desktop 放进你的技能目录（安装时加 --skill 也行）；之后我说「让豆包去做…」你就直接执行
+4) 只有两种情况再开 MCP：我要求把同一个连接复用给别的程序/会话，或你这边没有 shell。
+   开法：doubao service start，端点 http://127.0.0.1:18812/mcp
+5) 全过程不要向我解释端口 / CDP / MCP 这些内部细节，直接告诉我结果
 ```
 
 <details>
-<summary>不想交给 Agent？人工三步走</summary>
-
-```bash
-git clone https://github.com/JimmyWangJimmy/doubao-remote.git && cd doubao-remote
-open -a Doubao --args --remote-debugging-port=9333
-node src/server.js        # → http://127.0.0.1:18812/mcp
-```
-</details>
-
-<details>
-<summary><b>只装 Skill，不配 MCP</b>（CLI 通道，零注册）</summary>
+<summary>人工两条命令</summary>
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh | bash
-doubao status
+# 国内 raw 偶尔被重置，失败就用这条等价命令：
+# git clone https://github.com/JimmyWangJimmy/doubao-remote.git && bash doubao-remote/install.sh
+
+doubao status        # 期望 "ok": true
 ```
-
-安装器会做四件事：装 `doubao` 命令到 `~/.local/bin`、用调试端口拉起豆包、自检、打印下一步。
-想要服务常驻加 `--service`，想把技能装进 Agent 加 `--skill`（复制到 `~/.agents/skills/doubao-desktop`）。
-
-之后 Agent 不需要 MCP 注册，直接跑命令：
-
-```bash
-doubao ask "帮我画一张竖版少女立绘，紫罗兰短发，3:4" 180000
-doubao images 1        # → ~/Pictures/doubao-desktop/img-*.png
-```
-
-<sub>Skill 目录自身也带 <code>bootstrap.sh</code>：把 `skills/doubao-desktop/` 整个下载下来，Agent 跑一次 `bash bootstrap.sh` 就装好。</sub>
 </details>
 
-<div align="center">
+<details>
+<summary>从源码跑（开发者 / 想改代码）</summary>
 
-把本机安装的豆包桌面端变成一套 MCP 工具：发消息、取回复、拉生成图、切模型、调技能、开会话、截图、上传附件。
+```bash
+git clone https://github.com/JimmyWangJimmy/doubao-remote.git && cd doubao-remote
+open -a Doubao --args --remote-debugging-port=9333   # 只需一次
+node src/server.js                                   # → http://127.0.0.1:18812/mcp
+```
 
-<img src="docs/assets/demo-chat.png" alt="doubao-remote driving the Doubao desktop app" width="880"/>
+> 如果 18812 已被服务占用（`EADDRINUSE`），说明 MCP 已经在跑：`doubao service status` 确认即可，不要再起第二个。
+</details>
 
-</div>
+<details>
+<summary>只装 Skill，不配 MCP（CLI 通道）</summary>
 
----
+安装器已经包含 CLI；要顺带把技能装进 Agent 目录：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh | bash -s -- --skill
+# 或（raw 不通时）：git clone https://github.com/JimmyWangJimmy/doubao-remote.git && bash doubao-remote/install.sh --skill
+```
+
+它会做四件事：装 `doubao` 命令到 `~/.local/bin`、用调试端口拉起豆包、自检、打印下一步。
+加 `--service` 才会装 launchd 常驻服务（只有复杂任务或纯 MCP 宿主才需要）。
+</details>
 
 ## 目录
 
