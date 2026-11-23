@@ -7,8 +7,16 @@ module.exports = {
   upload: '[data-testid=upload_file_button]',
   model: '[data-testid=chat_input_action_model]',
   mode: '[data-testid=chat_input_action_mode]',
-  skill: '[data-testid=general-agent-skill-button]',
-  plugin: '[data-testid=general-agent-plugin-button]',
+  // 2.37 (macOS) exposes general-agent-skill-button; 2.35 (Windows) only ships the skill bar row.
+  skill: [
+    '[data-testid=general-agent-skill-button]',
+    '[data-testid=skill_bar_button_more]',
+    '[data-testid^=skill_bar_button_]',
+  ],
+  plugin: [
+    '[data-testid=general-agent-plugin-button]',
+    '[data-testid^=plugin_]',
+  ],
   inputChip: '[data-testid=chat_input] [aria-label]',
 
   reply: '[data-testid=receive_message]',
