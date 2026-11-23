@@ -1,6 +1,6 @@
 {
   "name": "doubao-remote",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "豆包遥控器 — drive the local Doubao desktop app from any agent (Skill / CLI / MCP)",
   "type": "commonjs",
   "main": "src/server.js",
