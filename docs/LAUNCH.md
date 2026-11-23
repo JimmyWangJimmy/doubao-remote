@@ -90,58 +90,81 @@
 - [ ] 每次发版在 CHANGELOG + 一条推文
 - [ ] 把 issue 当客服：前 10 个 issue 全部当天回，这是早期最重要的"口碑资产"
 
-## 4. 可直接复制的文案
+## 4. 文案：从用户痛点出发
 
-> 规则：**两句话，第二句是链接**。第一句讲"它做了什么我做不到的事"，第二句给出口。
-> 不要形容词，不要"强大的""全新的"，不要罗列特性。
+### 4.1 谁在看，他疼在哪
 
-### 中文（即刻 / 微博 / 群）
+| 人群 | 他现在的真实动作 | 痛点 | 钩子该打哪 |
+|---|---|---|---|
+| **豆包重度用户（非程序员）** | 复制提示词 → 粘贴 → 等 → 右键另存 → 改文件名 → 丢进文件夹 | 一次一张，全是手工；十张图就是半小时 | 「不用再手动存图」 |
+| **AI 编程用户（Claude Code / Cursor）** | 想用豆包的画图能力，但发现没有 API，只能切窗口手动做 | 工作流断在最后一步 | 「让 Claude Code 能直接画图」 |
+| **批量/自动化需求** | 20 个 SKU 各出一张图、每天一张封面 → 手动不可能 | 重复劳动，无法定时 | 「一行命令，批量、定时都行」 |
+| **技术猎奇者** | 想知道"没有 API 的桌面 App 怎么被驱动" | 好奇实现 | 「它是 Chromium 壳」 |
 
-**A（推荐）**
-```
-让 AI 自己用豆包：说一句「画只赛博朋克猫」，它自己输入、发送、把图存进我文件夹。
-一条命令装完，Mac 能用 → github.com/JimmyWangJimmy/doubao-remote
-```
+### 4.2 五条钩子（每条只打一个痛点）
 
-**B（更直白）**
+**① 非程序员 · 省手工**（推荐发即刻 / 小红书）
 ```
-豆包桌面端没有 API，所以我给它开了一个，现在 Claude Code 能直接指挥它干活、出图。
-一条命令：github.com/JimmyWangJimmy/doubao-remote
-```
-
-**C（最短，适合评论区）**
-```
-把豆包接进了 Claude Code，它能自己开豆包、发消息、把图存下来。github.com/JimmyWangJimmy/doubao-remote
+豆包画完图，我得右键另存、再改文件名、再拖进文件夹，一张图 30 秒。
+现在一句话出十张，图自己落到文件夹里。
+github.com/JimmyWangJimmy/doubao-remote
 ```
 
-### 英文（X）
+**② AI 编程 · 补上工作流最后一步**（推荐发 X / 技术群）
 ```
-Doubao desktop has no API — it's a Chromium shell, so I opened a debug port and now Claude Code can drive it.
-One command, macOS: github.com/JimmyWangJimmy/doubao-remote
-```
-
-### Hacker News（Show HN）
-
-标题：`Show HN: Doubao Remote – drive a desktop app that has no API`
-
-正文（三段，仍然克制）：
-```
-Doubao is ByteDance's assistant app. It ships no local API, but it's a Chromium shell,
-so --remote-debugging-port gives you the full CDP surface.
-
-I wrapped that into a CLI and an MCP server: chat, image generation (and pulling the
-files out), model switching, skills, navigation. No cloud keys, it drives the app you
-already have open.
-
-macOS only for now. Notes on what broke (JS .click() is ignored, overlays need text
-diffing) are in docs/PITFALLS.md.
+Claude Code 写代码很强，但画不了图；豆包画得好，却死活不给 API。
+现在它俩能连上了，一句话让豆包画完直接落盘。
+github.com/JimmyWangJimmy/doubao-remote
 ```
 
-### 小红书 / 知乎 标题备选
+**③ 批量 · 时间对比**（最能打动人，适合即刻）
+```
+40 个商品图，手动让豆包一张张画，我昨天花了两小时。
+今天写了个脚本，一行命令跑完，8 分钟。
+github.com/JimmyWangJimmy/doubao-remote
+```
 
-- 「我让 AI 自己去用豆包画图，全程没碰鼠标」
-- 「豆包没有 API，于是我给它装了一个」
-- 「把豆包桌面端接进 Claude Code 是什么体验」
+**④ 反常识 · 技术猎奇**（适合 V2EX / HN）
+```
+豆包没开放 API，但它是 Chromium 壳 —— 开个调试端口，就能像调接口一样调它。
+不用截图、不用 OCR、不用点坐标，直接操作真实 UI。
+github.com/JimmyWangJimmy/doubao-remote
+```
+
+**⑤ 最短 · 一句话 + 链接**（评论区 / 转发用）
+```
+豆包不给 API，我就从它的界面里抢了一个。github.com/JimmyWangJimmy/doubao-remote
+```
+
+### 4.3 英文（X）
+
+```
+Claude Code can write code but can't draw. Doubao draws well but ships no API.
+Now they talk: one command and the image lands in your folder.
+github.com/JimmyWangJimmy/doubao-remote
+```
+
+### 4.4 Hacker News（Show HN）
+
+标题：`Show HN: Doubao Remote – driving a desktop app that has no API`
+
+```
+Doubao is ByteDance's assistant app. No local API, but it's a Chromium shell, so
+--remote-debugging-port exposes the full CDP surface. I wrapped it into a CLI and an
+MCP server: chat, image generation (and pulling the files out), model switching,
+skills, navigation.
+
+The annoying parts were not the protocol but the UI: JS .click() is ignored on its
+menus (needs Input.dispatchMouseEvent), overlays have to be read by diffing
+body.innerText, and "reply finished" requires filtering intermediate states.
+Notes: docs/PITFALLS.md. macOS only for now.
+```
+
+### 4.5 写文案的三条硬规则
+
+1. **第一行必须是"我（用户）的麻烦"，不是"我的项目"**
+2. **给数字**：30 秒 / 两张 / 8 分钟 / 一行命令 —— 数字比形容词可信
+3. **链接放最后一行**，前面不要出现仓库名，否则读者在读懂价值前就划走
 
 ## 5. 提交清单（目录站）
 
