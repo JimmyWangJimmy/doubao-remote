@@ -20,6 +20,7 @@ const { tools } = require('../src/tools');
 const MCP_PORT = Number(process.env.DOUBAO_DESKTOP_PORT || 18812);
 const PLIST = path.join(os.homedir(), 'Library/LaunchAgents/com.jimmy.doubao-remote.plist');
 const SERVER = path.join(__dirname, '..', 'src', 'server.js');
+const IS_WIN = process.platform === 'win32';
 
 function portOpen(port, timeout = 800) {
   return new Promise((resolve) => {
@@ -32,14 +33,36 @@ function portOpen(port, timeout = 800) {
   });
 }
 
+/** Windows has no launchctl/pkill: locate the PID owning the MCP port and taskkill it. */
+function killWindowsPortOwner(port) {
+  let netstat = '';
+  try { netstat = execFileSync('netstat', ['-ano', '-p', 'TCP'], { encoding: 'utf8', timeout: 12000 }); } catch { return []; }
+  const killed = [];
+  for (const line of netstat.split(/\r?\n/)) {
+    if (!/LISTENING/i.test(line)) continue;
+    if (line.indexOf(':' + port) === -1) continue;
+    const pid = (line.trim().split(/\s+/).pop() || '').trim();
+    if (!/^\d+$/.test(pid)) continue;
+    if (killed.includes(pid)) continue;
+    try { execFileSync('taskkill', ['/PID', pid, '/F', '/T'], { stdio: 'ignore', timeout: 10000 }); killed.push(pid); } catch {}
+  }
+  return killed;
+}
+
 async function service(action) {
   const running = await portOpen(MCP_PORT);
+  const launcher = fs.existsSync(PLIST) ? 'launchd' : (IS_WIN ? 'detached-process' : 'none');
   if (action === 'status') {
     return { ok: true, running, port: MCP_PORT, endpoint: running ? `http://127.0.0.1:${MCP_PORT}/mcp` : null,
-      launcher: fs.existsSync(PLIST) ? 'launchd' : 'none' };
+      launcher };
   }
   if (action === 'stop') {
     if (!running) return { ok: true, stopped: 'already-stopped' };
+    if (IS_WIN) {
+      const killed = killWindowsPortOwner(MCP_PORT);
+      await new Promise((r) => setTimeout(r, 900));
+      return { ok: true, stopped: killed.length ? 'stopped' : 'not-found', killed, running: await portOpen(MCP_PORT) };
+    }
     try { execFileSync('launchctl', ['bootout', `gui/${process.getuid ? process.getuid() : 501}/com.jimmy.doubao-remote`], { stdio: 'ignore' }); } catch {}
     try { execFileSync('pkill', ['-f', 'src/server.js'], { stdio: 'ignore' }); } catch {}
     await new Promise((r) => setTimeout(r, 800));
