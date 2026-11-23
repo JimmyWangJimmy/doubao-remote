@@ -21,6 +21,8 @@
 
 ---
 
+<p align="center"><img src="docs/assets/promo-banner.jpg" alt="一句话让豆包自己干活" width="900"/></p>
+
 ## 这是什么
 
 把本机安装的豆包桌面端，变成 Agent 能直接调用的一组能力：
