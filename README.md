@@ -2,7 +2,7 @@
 
 <img src="docs/assets/logo.svg" alt="logo" width="96" height="96"/>
 
-# Doubao Desktop MCP
+<h2 align="center">Doubao Desktop MCP</h2>
 
 <p><b>Drive the local Doubao desktop app (豆包.app) from any MCP client —<br/>real UI, zero cloud keys.</b></p>
 
