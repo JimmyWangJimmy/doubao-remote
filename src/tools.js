@@ -12,15 +12,64 @@ const PENDING = /正在(思考|生成|处理|搜索|绘制|画图)|^已处理\s*
 
 /* ------------------------------------------------------------------ helpers */
 
+const IS_WIN = process.platform === 'win32';
+const WIN_EXE_NAMES = ['Doubao.exe', 'doubao.exe', '豆包.exe'];
+
+/** Locate Doubao.exe on Windows: env override, live process image path, then common install dirs. */
+function findWindowsAppPath() {
+  if (process.env.DOUBAO_APP_EXE && fs.existsSync(process.env.DOUBAO_APP_EXE)) return process.env.DOUBAO_APP_EXE;
+  try {
+    const ps = execFileSync('powershell', ['-NoProfile', '-Command',
+      "(Get-Process Doubao -ErrorAction SilentlyContinue | Where-Object { $_.Path } | Select-Object -First 1 -ExpandProperty Path)"],
+      { encoding: 'utf8', timeout: 8000 }).trim();
+    if (ps && fs.existsSync(ps)) return ps;
+  } catch { /* ignore */ }
+  const guesses = [
+    path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Doubao', 'Doubao.exe'),
+    path.join(process.env.LOCALAPPDATA || '', 'Doubao', 'Doubao.exe'),
+    'C:\\Program Files\\Doubao\\Doubao.exe',
+    'C:\\Program Files (x86)\\Doubao\\Doubao.exe',
+    'D:\\Software\\Doubao\\app\\Doubao.exe',
+  ];
+  return guesses.find((p) => p && fs.existsSync(p)) || null;
+}
+
 async function pids() {
   try {
-    assertRunningOnlyMac();
+    if (IS_WIN) {
+      const out = execFileSync('tasklist', ['/FI', 'IMAGENAME eq Doubao.exe', '/FO', 'CSV', '/NH'],
+        { encoding: 'utf8', timeout: 8000 });
+      return out.split(/\r?\n/)
+        .map((line) => (line.match(/^"Doubao\.exe","(\d+)"/i) || [])[1])
+        .filter(Boolean);
+    }
     return execFileSync('pgrep', ['-f', 'Doubao.app/Contents/MacOS/Doubao'], { encoding: 'utf8' })
       .split('\n').map((s) => s.trim()).filter(Boolean);
   } catch { return []; }
 }
-function assertRunningOnlyMac() {
-  if (process.platform !== 'darwin') throw new Error('macOS only');
+
+/** Quit every Doubao process: osascript on macOS, taskkill on Windows. */
+async function quitApp() {
+  if (IS_WIN) {
+    for (const name of WIN_EXE_NAMES) {
+      try { execFileSync('taskkill', ['/IM', name, '/F', '/T'], { stdio: 'ignore', timeout: 15000 }); } catch { /* not running */ }
+    }
+    return;
+  }
+  try { execFileSync('osascript', ['-e', 'tell application "Doubao" to quit'], { timeout: 8000 }); } catch {}
+}
+
+/** Launch Doubao with a devtools port. Throws when the Windows executable is unknown. */
+function launchApp() {
+  if (IS_WIN) {
+    const exe = findWindowsAppPath();
+    if (!exe) throw new Error('Doubao.exe not found; set DOUBAO_APP_EXE to its full path');
+    spawn(exe, [`--remote-debugging-port=${DEFAULTS.port}`],
+      { detached: true, stdio: 'ignore', windowsHide: false }).unref();
+    return;
+  }
+  spawn('open', ['-a', 'Doubao', '--args', `--remote-debugging-port=${DEFAULTS.port}`],
+    { detached: true, stdio: 'ignore' }).unref();
 }
 
 async function pageState(cdp) {
@@ -126,9 +175,22 @@ function diffText(before, after) {
   return after.slice(i, after.length - j).trim();
 }
 
+/** Resolve the first selector that actually exists, so one tool can cover several app builds. */
+async function resolveSelector(cdp, selector) {
+  if (!Array.isArray(selector)) return selector;
+  const found = await cdp.eval(`(() => {
+    const list = ${JSON.stringify(selector)};
+    for (const q of list) { try { if (document.querySelector(q)) return q; } catch (e) {} }
+    return null;
+  })()`);
+  if (!found) throw new Error('element not found: ' + selector.join(' | '));
+  return found;
+}
+
 async function panelDelta(cdp, selector, settle = 900) {
+  const sel = await resolveSelector(cdp, selector);
   let before = await cdp.eval('document.body.innerText');
-  await cdp.click(selector, { settle });
+  await cdp.click(sel, { settle });
   let after = await cdp.eval('document.body.innerText');
   let inserted = diffText(before, after);
   if (!inserted) {
@@ -136,7 +198,7 @@ async function panelDelta(cdp, selector, settle = 900) {
     await cdp.press('Escape');
     await sleep(350);
     before = await cdp.eval('document.body.innerText');
-    await cdp.click(selector, { settle });
+    await cdp.click(sel, { settle });
     after = await cdp.eval('document.body.innerText');
     inserted = diffText(before, after);
   }
@@ -169,16 +231,20 @@ async function clickText(cdp, needle, rootSelector) {
   const sel = await cdp.eval(`(() => {
     const vis = (e) => !!(e.offsetWidth || e.offsetHeight);
     const root = document.querySelector(${JSON.stringify(rootSelector || 'body')}) || document.body;
-    const nodes = [...root.querySelectorAll('button,[role=button],[role=menuitem],div,li,span,label')].filter(vis);
-    const exact = nodes.filter((e) => (e.innerText || '').trim() === ${JSON.stringify(needle)});
-    const loose = exact.length ? exact : nodes.filter((e) => {
-      const t = (e.innerText || '').trim();
-      return t.startsWith(${JSON.stringify(needle)}) && t.length < ${JSON.stringify(needle)}.length + 24;
-    });
-    const items = loose;
-    if (!items.length) return null;
-    const node = items[items.length - 1];
-    if (!node.dataset.dshProbe) node.dataset.dshProbe = '1';
+    const nodes = [...root.querySelectorAll('button,[role=button],[role=menuitem],[role=option],div,li,span,label')].filter(vis);
+    const wanted = ${JSON.stringify(needle)};
+    const flat = (e) => (e.innerText || '').replace(/\\s+/g, ' ').trim();
+    const firstLine = (e) => ((e.innerText || '').trim().split('\\n')[0] || '').trim();
+    // 1) exact text, 2) first line equals the needle (list rows carry a description below),
+    // 3) prefix match. Always prefer the innermost (shortest-text) candidate so we do not
+    // click a giant container that happens to contain the label.
+    let pool = nodes.filter((e) => flat(e) === wanted);
+    if (!pool.length) pool = nodes.filter((e) => firstLine(e) === wanted);
+    if (!pool.length) pool = nodes.filter((e) => flat(e).startsWith(wanted) && flat(e).length < wanted.length + 24);
+    if (!pool.length) return null;
+    pool.sort((a, b) => flat(a).length - flat(b).length);
+    const node = pool[0];
+    node.dataset.dshProbe = '1';
     return '[data-dsh-probe="1"]';
   })()`);
   if (!sel) return false;
@@ -216,12 +282,11 @@ const tools = {
     schema: { type: 'object', properties: {}, additionalProperties: false },
     async run() {
       try { await httpJson(`http://127.0.0.1:${DEFAULTS.port}/json/version`); return { ok: true, action: 'none' }; } catch {}
-      if (process.platform !== 'darwin') return { ok: false, error: 'macOS only' };
       if ((await pids()).length) {
-        try { execFileSync('osascript', ['-e', 'tell application "Doubao" to quit'], { timeout: 8000 }); } catch {}
-        for (let i = 0; i < 20; i++) { if (!(await pids()).length) break; await sleep(300); }
+        await quitApp();
+        for (let i = 0; i < 40; i++) { if (!(await pids()).length) break; await sleep(300); }
       }
-      spawn('open', ['-a', 'Doubao', '--args', `--remote-debugging-port=${DEFAULTS.port}`], { detached: true, stdio: 'ignore' }).unref();
+      try { launchApp(); } catch (e) { return { ok: false, action: 'launch-failed', error: String(e.message || e) }; }
       for (let i = 0; i < 45; i++) {
         await sleep(700);
         try { await httpJson(`http://127.0.0.1:${DEFAULTS.port}/json/version`, 1500); return { ok: true, action: 'relaunched' }; } catch {}
@@ -277,10 +342,12 @@ const tools = {
     async run(args) {
       const cdp = await connect();
       let ok = false;
-      if (args.selector) { await cdp.click(args.selector); ok = true; }
-      else if (args.testid) { await cdp.click(`[data-testid=${args.testid}]`); ok = true; }
+      if (args.selector) { await cdp.click(args.selector, { settle: 900 }); ok = true; }
+      else if (args.testid) { await cdp.click(`[data-testid=${args.testid}]`, { settle: 900 }); ok = true; }
       else if (args.text) { ok = await clickText(cdp, args.text, args.scope); }
       if (!ok) return { ok: false, error: 'target not found' };
+      // Popovers (workspace switch, model menu) mount a frame or two after the click.
+      await sleep(350);
       return { ok: true, surfaces: await surfaces(cdp), page: await pageState(cdp) };
     },
   },
@@ -569,6 +636,24 @@ const tools = {
     schema: { type: 'object', properties: {}, additionalProperties: false },
     async run() {
       const cdp = await connect();
+      if (IS_WIN) {
+        // Windows builds ship no composer plugin chip (the 2.35 composer only has
+        // upload / mode / skills / model). Plugins and 伙伴 live on the
+        // 「插件 · 技能 · 伙伴」page, so read it there and come back.
+        const before = await cdp.eval('location.href');
+        await cdp.click(SEL.skillsPage, { settle: 1600 });
+        const info = await cdp.eval(`(() => ({
+          title: document.title,
+          url: location.href,
+          text: (document.body.innerText || '').replace(/\\n+/g, ' | ').slice(0, 4000),
+        }))()`);
+        await cdp.eval('history.back()');
+        await sleep(900);
+        return {
+          ok: !!(info && info.text), via: 'skills-page',
+          panel: info.text, page: { title: info.title, url: info.url, returned_to: before },
+        };
+      }
       const d = await panelDelta(cdp, SEL.plugin, 1000);
       await cdp.press('Escape');
       return { ok: d.grew, panel: d.inserted, surfaces: await surfaces(cdp) };
