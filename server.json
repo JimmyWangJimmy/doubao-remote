@@ -1,18 +1,16 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
   "name": "io.github.JimmyWangJimmy/doubao-remote",
-  "description": "Drive the local Doubao (豆包) desktop app over Chromium DevTools: chat, image generation, model switching, skills, navigation. macOS.",
+  "description": "Drive the LOCAL Doubao (豆包) desktop app on macOS over Chromium DevTools. Not a remote service: install the doubao CLI / MCP server from the repo, it talks to 127.0.0.1:9333 and 127.0.0.1:18812.",
   "version": "2.0.0",
   "repository": {
     "url": "https://github.com/JimmyWangJimmy/doubao-remote",
     "source": "github"
   },
-  "packages": [
+  "remotes": [
     {
-      "registryType": "npm",
-      "identifier": "doubao-remote",
-      "version": "2.0.0",
-      "transport": { "type": "stdio" }
+      "type": "streamable-http",
+      "url": "http://127.0.0.1:18812/mcp"
     }
   ]
 }
