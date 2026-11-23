@@ -14,6 +14,33 @@
 [![Platform](https://img.shields.io/badge/platform-macOS%2012%2B-black?logo=apple&logoColor=white)](#-限制)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
+</div>
+
+## ⚡ 一句话安装
+
+把下面这一整段复制给你的 Agent（Claude Code / Cursor / DSH / 任意支持 MCP 的客户端），剩下的它自己会做完：
+
+```text
+帮我安装并接入 doubao-desktop-mcp（https://github.com/JimmyWangJimmy/doubao-desktop-mcp）。
+步骤：1) 克隆到 ~/Github/doubao-desktop-mcp；2) 若豆包没带调试端口，执行
+open -a Doubao --args --remote-debugging-port=9333，并确认 curl -s 127.0.0.1:9333/json/version 有返回；
+3) 在后台跑 node src/server.js（MCP 端点 http://127.0.0.1:18812/mcp，Node >= 21，零依赖）；
+4) 把该端点按 streamable-http 注册成名为 doubao-desktop 的 MCP；
+5) 用 doubao_desktop_status 验证已连上，不要跳过这步；有问题按 README 的「故障速查」处理。
+```
+
+<details>
+<summary>不想交给 Agent？人工三步走</summary>
+
+```bash
+git clone https://github.com/JimmyWangJimmy/doubao-desktop-mcp.git && cd doubao-desktop-mcp
+open -a Doubao --args --remote-debugging-port=9333
+node src/server.js        # → http://127.0.0.1:18812/mcp
+```
+</details>
+
+<div align="center">
+
 把本机安装的豆包桌面端变成一套 MCP 工具：发消息、取回复、拉生成图、切模型、调技能、开会话、截图、上传附件。<br/>
 不是云端 API，不是屏幕坐标点击 —— **走它自带的 Chromium DevTools 协议**。
 
@@ -26,7 +53,7 @@
 ## 目录
 
 - [这是什么](#这是什么)
-- [为什么不是官方 MCP](#为什么不是官方-mcp)
+- [一句话安装](#-一句话安装)
 - [快速开始](#快速开始)
 - [接入客户端](#接入客户端)
 - [工具参考（23 个）](#-工具参考23-个)
@@ -56,18 +83,6 @@ Agent  ──MCP (HTTP)──▶  doubao-desktop-mcp  ──CDP (WebSocket)─�
 - 🪶 **零依赖**：只有一个 Node 文件 + stdlib，`node src/server.js` 就能跑
 - 🔁 **可常驻**：附 `launchd` 模板，登录自启、崩溃自拉
 - 🧪 **可复跑**：28 项冒烟测试，一条命令验证你的豆包版本还能不能驱动
-
-## 为什么不是官方 MCP
-
-`Doubao.app/Contents/Helpers/libmcp_helper.dylib` 里确实打包了 `rmcp-3.2.0` —— 但那是它的 **MCP 客户端**（豆包去连别人的 MCP server），不是 server，桌面端也没有任何本地 HTTP 端口。
-
-真正的入口在于它是 **Chromium 壳**：`NSPrincipalClass = BrowserCrApplication`，内核 `Chrome/147.0.7727.149`。启动时给一个开关，就能拿到完整 DevTools 协议：
-
-```bash
-open -a Doubao --args --remote-debugging-port=9333
-curl -s http://127.0.0.1:9333/json/version
-# {"Browser":"Chrome/147.0.7727.149","Protocol-Version":"1.3", ...}
-```
 
 ## 快速开始
 
@@ -186,6 +201,8 @@ scripts/smoke.js   28 项全量冒烟，输出 docs/smoke.json + docs/SMOKE.md
 scripts/cdp-*.js   调试三件套：eval / click / probe
 skills/            Agent 用 Skill（含故障速查）
 ```
+
+> 入口原理：豆包桌面端是 Chromium 壳（`BrowserCrApplication` / `Chrome/147`），带 `--remote-debugging-port` 启动后即可拿到完整 DevTools 协议。
 
 三条设计取舍：
 
