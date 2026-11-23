@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.jimmy.doubao-desktop-mcp</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/node</string>
+    <string>__REPO__/src/server.js</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>DOUBAO_DESKTOP_PORT</key><string>18812</string>
+    <key>CDP_PORT</key><string>9333</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>__REPO__/var/server.out</string>
+  <key>StandardErrorPath</key><string>__REPO__/var/server.err</string>
+</dict>
+</plist>

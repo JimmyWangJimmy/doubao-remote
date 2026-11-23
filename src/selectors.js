@@ -1,0 +1,50 @@
+'use strict';
+/** All selectors were verified against Doubao desktop 2.37.12 (Chromium 147). */
+module.exports = {
+  composer: '[data-testid=chat_input_input] .ProseMirror',
+  composerBox: '[data-testid=chat_input]',
+  send: '[data-testid=chat_input_send_button]',
+  upload: '[data-testid=upload_file_button]',
+  model: '[data-testid=chat_input_action_model]',
+  mode: '[data-testid=chat_input_action_mode]',
+  skill: '[data-testid=general-agent-skill-button]',
+  plugin: '[data-testid=general-agent-plugin-button]',
+  inputChip: '[data-testid=chat_input] [aria-label]',
+
+  reply: '[data-testid=receive_message]',
+  replyText: '[data-testid=message_text_content]',
+  replyImages: '[data-testid=message_image_content] img, [data-testid=mdbox_image] img',
+  sendMessage: '[data-testid=send_message]',
+  copy: '[data-testid=message_action_copy]',
+  share: '[data-testid=message_action_share]',
+  like: '[data-testid=message_action_like]',
+  dislike: '[data-testid=message_action_dislike]',
+  regenerate: '[data-testid=message_action_regenerate]',
+  messageMore: '[data-testid=message_action_more]',
+  readAloud: '[data-testid=audio_play_button]',
+  imageDownload: '[data-testid=edit_image_hover_tag_download_btn]',
+  imageReference: '[data-testid=edit_image_hover_tag_reference_btn]',
+  imageCanvas: '[data-testid=edit_image_hover_tag_open_canvas_btn]',
+  toBottom: '[data-testid=to-bottom-button]',
+
+  newChat: '[data-testid=create_conversation_button]',
+  officeTask: '[data-testid=create_office_task_button]',
+  convItem: '[data-testid=conversation-list-v2-item]',
+  convName: '[data-testid=editable_conversation_name]',
+  headerMore: '[data-testid=conversation_header_more_button]',
+  search: '[data-testid=global-search-icon-entry]',
+  workspaceSwitch: '[data-testid=workspace-switch-chip]',
+
+  workbench: '[data-testid=sidebar_workbench_nav_button]',
+  cron: '[data-testid=cron-jobs-sidebar-entry]',
+  skillsPage: '[data-testid=sidebar_skills_nav_button]',
+  library: '[data-testid=ai_space_nav_button]',
+  settings: '[data-testid=sidebar_footer_setting_entry]',
+  sidebarMore: '[data-testid=sidebar_bottom]',
+
+  markers: {
+    quickPanel: '快捷功能',
+    skillSection: '技能 (',
+    pluginSection: '插件',
+  },
+};

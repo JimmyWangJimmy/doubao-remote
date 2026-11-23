@@ -1,0 +1,204 @@
+{
+  "generatedAt": "2026-11-23T08:59:54.297Z",
+  "total": 28,
+  "passed": 28,
+  "failed": 0,
+  "results": [
+    {
+      "id": "C01",
+      "capability": "应用状态 / devtools 连通",
+      "tool": "doubao_desktop_status",
+      "ok": true,
+      "detail": "Chrome/147.0.7727.149"
+    },
+    {
+      "id": "C02",
+      "capability": "按标题打开会话",
+      "tool": "doubao_desktop_open_conversation",
+      "ok": true,
+      "detail": "介绍自己 - 豆包"
+    },
+    {
+      "id": "C03",
+      "capability": "页面快照 + 浮层读取",
+      "tool": "doubao_desktop_snapshot",
+      "ok": true,
+      "detail": "介绍自己 - 豆包"
+    },
+    {
+      "id": "C09",
+      "capability": "消息动作：复制",
+      "tool": "doubao_desktop_message_action",
+      "ok": true,
+      "detail": "copy"
+    },
+    {
+      "id": "C10",
+      "capability": "消息动作：朗读（TTS）",
+      "tool": "doubao_desktop_message_action",
+      "ok": true,
+      "detail": "read_aloud"
+    },
+    {
+      "id": "C04",
+      "capability": "模型菜单枚举",
+      "tool": "doubao_desktop_models",
+      "ok": true,
+      "detail": "自动 小额免费 豆包 2.1 Lite 限时优惠 0.01x 豆包 2.1 Pro 0.65x DeepSeek V4.1 Flash 限时优惠 0.01x Q"
+    },
+    {
+      "id": "C05",
+      "capability": "技能面板枚举（快捷功能 + 技能 30）",
+      "tool": "doubao_desktop_skills",
+      "ok": true,
+      "detail": "快捷功能 (6) 用量 上下文用量 6% 技能管理 计划 描述你的任务，执行前会先输出计划 目标 描述你的目标，成果定义越清晰效果越好 打开画布 在无限画布中自"
+    },
+    {
+      "id": "C06",
+      "capability": "插件/伙伴面板",
+      "tool": "doubao_desktop_plugins",
+      "ok": true,
+      "detail": "地图    为你提供查地点、查路线、查公交、驾车和步骑行导航等全方位地理信息服务 添加插件 管理插件"
+    },
+    {
+      "id": "C07",
+      "capability": "会话列表读取",
+      "tool": "doubao_desktop_conversations",
+      "ok": true,
+      "detail": "31 条"
+    },
+    {
+      "id": "C08",
+      "capability": "历史生成图抓取（message_image_content）",
+      "tool": "doubao_desktop_images",
+      "ok": true,
+      "detail": "2 张"
+    },
+    {
+      "id": "C11",
+      "capability": "切换模型",
+      "tool": "doubao_desktop_set_model",
+      "ok": true,
+      "detail": "豆包 2.1 Pro"
+    },
+    {
+      "id": "C12",
+      "capability": "技能选择",
+      "tool": "doubao_desktop_toggle_skill",
+      "ok": true,
+      "detail": "地图"
+    },
+    {
+      "id": "C13",
+      "capability": "新建会话",
+      "tool": "doubao_desktop_new_chat",
+      "ok": true,
+      "detail": "chrome://doubao-chat/chat"
+    },
+    {
+      "id": "C14",
+      "capability": "输入层：写入输入框",
+      "tool": "doubao_desktop_type",
+      "ok": true,
+      "detail": "10 字"
+    },
+    {
+      "id": "C15",
+      "capability": "对话：发送并取回回复",
+      "tool": "doubao_desktop_ask",
+      "ok": true,
+      "detail": "收到"
+    },
+    {
+      "id": "C16",
+      "capability": "回复历史读取",
+      "tool": "doubao_desktop_replies",
+      "ok": true,
+      "detail": "1 条"
+    },
+    {
+      "id": "C17",
+      "capability": "导航：工作台",
+      "tool": "doubao_desktop_goto",
+      "ok": true,
+      "detail": "豆包"
+    },
+    {
+      "id": "C18",
+      "capability": "导航：定时任务",
+      "tool": "doubao_desktop_goto",
+      "ok": true,
+      "detail": "豆包"
+    },
+    {
+      "id": "C19",
+      "capability": "导航：资料库",
+      "tool": "doubao_desktop_goto",
+      "ok": true,
+      "detail": "豆包"
+    },
+    {
+      "id": "C20",
+      "capability": "导航：技能页",
+      "tool": "doubao_desktop_goto",
+      "ok": true,
+      "detail": "豆包"
+    },
+    {
+      "id": "C21",
+      "capability": "全局搜索",
+      "tool": "doubao_desktop_search",
+      "ok": true,
+      "detail": "清空 全部 消息 对话 资料库 本地产物 Previous slide Next slide 对话 0-K/年报、8-K"
+    },
+    {
+      "id": "C22",
+      "capability": "附件上传",
+      "tool": "doubao_desktop_upload_file",
+      "ok": true,
+      "detail": "attached"
+    },
+    {
+      "id": "C23",
+      "capability": "截图",
+      "tool": "doubao_desktop_screenshot",
+      "ok": true,
+      "detail": "/Users/jimmy/Pictures/doubao-desktop/doubao-1795424383915.png"
+    },
+    {
+      "id": "C24",
+      "capability": "通用点击层（真实鼠标事件）",
+      "tool": "doubao_desktop_click",
+      "ok": true,
+      "detail": "model chip"
+    },
+    {
+      "id": "C25",
+      "capability": "JS 逃生舱",
+      "tool": "doubao_desktop_eval",
+      "ok": true,
+      "detail": "豆包"
+    },
+    {
+      "id": "C26",
+      "capability": "工作区切换（豆包 / 工作）",
+      "tool": "doubao_desktop_click",
+      "ok": true,
+      "detail": "workspace chip"
+    },
+    {
+      "id": "C27",
+      "capability": "新工作任务（Office 任务入口）",
+      "tool": "doubao_desktop_goto",
+      "ok": true,
+      "detail": "豆包 | 工作 | 新工作任务 | ⌘ N | ⌘ | N | 新对话 | ⇧ ⌘ K | ⇧ | ⌘ | K | 工作"
+    },
+    {
+      "id": "C28",
+      "capability": "图片动作：在画布打开",
+      "tool": "doubao_desktop_message_action",
+      "ok": true,
+      "detail": "open_canvas"
+    }
+  ]
+}
