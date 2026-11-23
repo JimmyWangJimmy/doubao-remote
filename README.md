@@ -41,8 +41,7 @@ node src/server.js        # → http://127.0.0.1:18812/mcp
 
 <div align="center">
 
-把本机安装的豆包桌面端变成一套 MCP 工具：发消息、取回复、拉生成图、切模型、调技能、开会话、截图、上传附件。<br/>
-不是云端 API，不是屏幕坐标点击 —— **走它自带的 Chromium DevTools 协议**。
+把本机安装的豆包桌面端变成一套 MCP 工具：发消息、取回复、拉生成图、切模型、调技能、开会话、截图、上传附件。
 
 <img src="docs/assets/demo-chat.png" alt="doubao-desktop-mcp driving the Doubao desktop app" width="880"/>
 
@@ -202,14 +201,6 @@ scripts/cdp-*.js   调试三件套：eval / click / probe
 skills/            Agent 用 Skill（含故障速查）
 ```
 
-> 入口原理：豆包桌面端是 Chromium 壳（`BrowserCrApplication` / `Chrome/147`），带 `--remote-debugging-port` 启动后即可拿到完整 DevTools 协议。
-
-三条设计取舍：
-
-1. **点击必须发真实鼠标事件**。`Input.dispatchMouseEvent` 三连（mouseMoved → pressed → released），JS `.click()` 对豆包菜单完全无效。
-2. **面板靠文本 diff 读**，不猜 z-index / role。点击前后各取一次 `body.innerText`，取最长公共前后缀之间插入的段落。
-3. **完成判定排除中间态**。`正在思考 / 正在生成图片 / 已处理 N 秒` 都要过滤，文本连续两轮稳定才算答案。
-
 ## 📋 能力清单
 
 实测环境：Doubao.app **2.37.12** · `Chrome/147` · 学生免费版。
@@ -225,7 +216,6 @@ skills/            Agent 用 Skill（含故障速查）
 
 <p align="center"><img src="docs/assets/demo-skills.png" alt="skills panel: quick actions, 30 built-in skills, 67 local skills" width="820"/></p>
 
-完整 testid 与证据见 **[docs/CAPABILITIES.md](docs/CAPABILITIES.md)**。
 
 ## ✅ 冒烟测试（28 项）
 
