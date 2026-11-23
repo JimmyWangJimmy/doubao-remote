@@ -11,8 +11,10 @@
 [![Tools](https://img.shields.io/badge/tools-23-blue)](docs/TOOLS.md)
 [![Node](https://img.shields.io/badge/node-%E2%89%A521-339933?logo=node.js&logoColor=white)](package.json)
 [![MCP](https://img.shields.io/badge/MCP-streamable--http-8f7cff)](https://modelcontextprotocol.io)
-[![Platform](https://img.shields.io/badge/platform-macOS%2012%2B-black?logo=apple&logoColor=white)](#限制与已知问题)
+[![Platform](https://img.shields.io/badge/platform-macOS%2012%2B-black?logo=apple&logoColor=white)](docs/ROADMAP.md)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+<p><b>macOS 12+ ✅ 已支持 &nbsp;·&nbsp; Windows 🚧 开发中</b></p>
 
 </div>
 
@@ -93,23 +95,6 @@ node src/server.js                                   # → http://127.0.0.1:1881
 | 看它现在在干什么 | `doubao screenshot` |
 | 换模型 / 看技能 | `doubao set-model "豆包 2.1 Lite"` · `doubao skills` |
 | 找历史对话 | `doubao conversations 20` → `doubao open "介绍自己"` |
-
-## 限制与已知问题
-
-- **只支持 macOS**（`open -a` / `osascript` / `pgrep`）
-- **跟着 UI 走**：豆包改版可能让选择器失效，`npm run smoke` 用来定位断点
-- **花的是你的额度**：出图一张约 12.70 点，界面会明写
-- **图片带水印**：`message_image_content` 的图自带「豆包AI生成」
-- **`doubao ensure` 会重启豆包**：未发送的输入会丢；单个 webview 只有一个焦点，调用请串行
-- 高级模型（如 豆包 2.1 Pro）需要订阅，切换成功 ≠ 账号有权限
-
-| 常见故障 | 处理 |
-|---|---|
-| `element not found: chat_input_action_model` | 在新对话（draft）页，先 `doubao open <已有会话>` |
-| `no Doubao page target` | 豆包没带调试端口，`doubao ensure` |
-| `timed_out: true` | 生成慢，别重发，`doubao replies 1` 续读 |
-
-完整 14 条：[docs/PITFALLS.md](docs/PITFALLS.md)
 
 ## 📚 文档
 
