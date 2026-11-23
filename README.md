@@ -204,6 +204,8 @@ skills/            Agent 用 Skill（含故障速查）
 | 消息动作 | 复制、分享、编辑、重新生成、点赞/点踩、朗读（TTS）、图片下载/参考/在画布打开 |
 | 导航 | 工作台、定时任务、资料库、技能页、新工作任务、全局搜索、设置、工作区切换 |
 
+<p align="center"><img src="docs/assets/demo-skills.png" alt="skills panel: quick actions, 30 built-in skills, 67 local skills" width="820"/></p>
+
 完整 testid 与证据见 **[docs/CAPABILITIES.md](docs/CAPABILITIES.md)**。
 
 ## ✅ 冒烟测试（28 项）
