@@ -49,10 +49,20 @@ async function ensureChatSurface() {
   return st;
 }
 const results = [];
+/** ok === 'skip' records a SKIP: the capability exists but this machine has no sample for it. */
 function record(id, capability, tool, ok, detail) {
-  results.push({ id, capability, tool, ok, detail: detail === undefined ? null : detail });
-  const flag = ok ? 'PASS' : 'FAIL';
+  const skipped = ok === 'skip';
+  results.push({ id, capability, tool, ok: skipped ? null : ok, skipped, detail: detail === undefined ? null : detail });
+  const flag = skipped ? 'SKIP' : (ok ? 'PASS' : 'FAIL');
   console.log(`${flag} ${id} ${capability} (${tool}) ${detail ? '— ' + String(detail).slice(0, 120) : ''}`);
+}
+
+/** Does the open conversation actually contain rendered images? (images / image_canvas need a sample) */
+async function conversationHasImages() {
+  const r = await rpc('doubao_desktop_eval', {
+    expression: `document.querySelectorAll('[data-testid=receive_message] img, [data-testid=message_image_content] img, [data-testid=mdbox_image] img').length`,
+  });
+  return Number(r && r.value) > 0;
 }
 
 (async () => {
@@ -76,9 +86,11 @@ function record(id, capability, tool, ok, detail) {
   r = await rpc('doubao_desktop_message_action', { action: 'read_aloud' });
   record('C10', '消息动作：朗读（TTS）', 'doubao_desktop_message_action', !!r.ok, r.error || 'read_aloud');
 
+  await ensureChatSurface();
   r = await rpc('doubao_desktop_models');
   record('C04', '模型菜单枚举', 'doubao_desktop_models', /豆包 2\.1 Pro/.test(r.panel || ''), (r.panel || '').replace(/\n/g, ' ').slice(0, 80));
 
+  await ensureChatSurface();
   r = await rpc('doubao_desktop_skills');
   record('C05', '技能面板枚举（快捷功能 + 技能 30）', 'doubao_desktop_skills', /快捷功能/.test(r.panel || ''), (r.panel || '').replace(/\n/g, ' ').slice(0, 80));
 
@@ -88,8 +100,11 @@ function record(id, capability, tool, ok, detail) {
   r = await rpc('doubao_desktop_conversations');
   record('C07', '会话列表读取', 'doubao_desktop_conversations', r.ok && r.count > 0, `${r.count} 条`);
 
+  const hasImgSample = await conversationHasImages();
   r = await rpc('doubao_desktop_images', { limit: 3 });
-  record('C08', '历史生成图抓取（message_image_content）', 'doubao_desktop_images', r.ok && r.count > 0, `${r.count} 张`);
+  record('C08', '历史生成图抓取（message_image_content）', 'doubao_desktop_images',
+    hasImgSample ? (r.ok && r.count > 0) : 'skip',
+    hasImgSample ? `${r.count} 张` : '当前会话没有生成图样本，跳过');
 
   await ensureChatSurface();
   r = await rpc('doubao_desktop_set_model', { name: '豆包 2.1 Pro' });
@@ -156,25 +171,30 @@ function record(id, capability, tool, ok, detail) {
 
   r = await rpc('doubao_desktop_open_conversation', { title: '介绍自己' });
   r = await rpc('doubao_desktop_message_action', { action: 'image_canvas' });
-  record('C28', '图片动作：在画布打开', 'doubao_desktop_message_action', !!r.ok, r.error || 'open_canvas');
+  record('C28', '图片动作：在画布打开', 'doubao_desktop_message_action',
+    (await conversationHasImages()) ? !!r.ok : 'skip', r.error || 'open_canvas');
   await rpc('doubao_desktop_goto', { target: 'chat' });
 
-  const pass = results.filter((x) => x.ok).length;
+  const pass = results.filter((x) => x.ok === true).length;
+  const skipped = results.filter((x) => x.skipped).length;
+  const failed = results.length - pass - skipped;
   const summary = {
     generatedAt: new Date().toISOString(),
+    platform: process.platform,
     total: results.length,
     passed: pass,
-    failed: results.length - pass,
+    skipped,
+    failed,
     results,
   };
   fs.mkdirSync(path.dirname(jsonOut), { recursive: true });
   fs.writeFileSync(jsonOut, JSON.stringify(summary, null, 2));
 
   const rows = results
-    .map((x) => `| ${x.id} | ${x.capability} | \`${x.tool}\` | ${x.ok ? '✅' : '❌'} | ${x.detail ? String(x.detail).replace(/\|/g, '/').slice(0, 90) : ''} |`)
+    .map((x) => `| ${x.id} | ${x.capability} | \`${x.tool}\` | ${x.skipped ? '➖' : (x.ok ? '✅' : '❌')} | ${x.detail ? String(x.detail).replace(/\|/g, '/').slice(0, 90) : ''} |`)
     .join('\n');
-  const md = `# 全量冒烟测试报告\n\n生成时间：${summary.generatedAt}\n\n通过 **${pass}/${results.length}**\n\n| # | 能力 | 工具 | 结果 | 证据 |\n|---|---|---|---|---|\n${rows}\n`;
+  const md = `# 全量冒烟测试报告\n\n生成时间：${summary.generatedAt}\n平台：${summary.platform}\n\n通过 **${pass}/${results.length}**${skipped ? `（跳过 ${skipped}，失败 ${failed}）` : ''}\n\n| # | 能力 | 工具 | 结果 | 证据 |\n|---|---|---|---|---|\n${rows}\n`;
   fs.writeFileSync(mdOut, md);
-  console.log(`\n${pass}/${results.length} passed → ${jsonOut}, ${mdOut}`);
-  process.exit(pass === results.length ? 0 : 1);
+  console.log(`\n${pass}/${results.length} passed${skipped ? `, ${skipped} skipped` : ''}${failed ? `, ${failed} failed` : ''} → ${jsonOut}, ${mdOut}`);
+  process.exit(failed === 0 ? 0 : 1);
 })().catch((e) => { console.error('SMOKE ERROR', e.message); process.exit(2); });
