@@ -35,6 +35,9 @@
 | Smithery | ⏸ 暂缓 | 需要公网 HTTP 端点 |
 | MCPCentral / PulseMCP / mcpservers.org | ⏳ 需人工 | 网页表单，需要账号登录 |
 | Glama.ai | 🔄 自动索引 | 已在 README 加徽章做反链 |
+| **首屏 demo GIF** | ✅ 已上线 | 真实录制：`doubao ask` → 豆包画猫 → 图落盘（`docs/assets/demo.gif`） |
+| **v2.0.0 Release** | ✅ 已发布 | https://github.com/JimmyWangJimmy/doubao-remote/releases/tag/v2.0.0 |
+| **3 个入门 issue** | ✅ 已开 | Windows 支持 / 英文 quickstart / 定时任务 CRUD |
 
 > 结论：**能自动化的都做完了**。剩下的要么需要公网端点（本项目性质不匹配），要么需要你本人登录填表。
 
