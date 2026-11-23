@@ -11,7 +11,7 @@
 [![Tools](https://img.shields.io/badge/tools-23-blue)](docs/TOOLS.md)
 [![Node](https://img.shields.io/badge/node-%E2%89%A521-339933?logo=node.js&logoColor=white)](package.json)
 [![MCP](https://img.shields.io/badge/MCP-streamable--http-8f7cff)](https://modelcontextprotocol.io)
-[![Platform](https://img.shields.io/badge/platform-macOS%2012%2B-black?logo=apple&logoColor=white)(#限制与已知问题)
+[![Platform](https://img.shields.io/badge/platform-macOS%2012%2B-black?logo=apple&logoColor=white)](#限制与已知问题)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 </div>
