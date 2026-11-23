@@ -17,6 +17,8 @@ metadata:
 
 ```bash
 command -v doubao >/dev/null || bash <(curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh)
+# raw.githubusercontent.com 连不上时用等价命令：
+#   git clone https://github.com/JimmyWangJimmy/doubao-remote.git && bash doubao-remote/install.sh
 doubao status        # 期望 "ok": true
 ```
 

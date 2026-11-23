@@ -18,18 +18,9 @@
 
 ## ⚡ 一句话安装
 
-把这一整段复制给你的 Agent（Claude Code / Cursor / DSH / 任意能干活的客户端），剩下的它自己做完：
-
 ```text
-帮我装好「豆包遥控器」并按它的说明直接使唤豆包：https://github.com/JimmyWangJimmy/doubao-remote
-1) 安装（raw 拉不下来就走 git 回退，两条都试）：
-   curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh | bash
-   或  git clone https://github.com/JimmyWangJimmy/doubao-remote.git && bash doubao-remote/install.sh
-2) 运行 doubao status，必须返回 "ok": true；不正常就按仓库 README 的「故障速查」修到能用为止
-3) 把仓库里的 skills/doubao-desktop 放进你的技能目录（安装时加 --skill 也行）；之后我说「让豆包去做…」你就直接执行
-4) 只有两种情况再开 MCP：我要求把同一个连接复用给别的程序/会话，或你这边没有 shell。
-   开法：doubao service start，端点 http://127.0.0.1:18812/mcp
-5) 全过程不要向我解释端口 / CDP / MCP 这些内部细节，直接告诉我结果
+帮我装好「豆包遥控器」并接上：https://github.com/JimmyWangJimmy/doubao-remote
+按 README 的「快速开始」装，跑 doubao status 确认 "ok": true，之后我用「让豆包去做…」直接使唤它。细节不用问我。
 ```
 
 <details>
@@ -107,22 +98,25 @@ Agent  ──MCP (HTTP)──▶  doubao-remote  ──CDP (WebSocket)──▶ 
 ## 快速开始
 
 ```bash
-git clone https://github.com/JimmyWangJimmy/doubao-remote.git
-cd doubao-remote
+# 1) 安装：装 CLI、带调试端口拉起豆包、自检（一条命令）
+curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh | bash
+#   raw 不通时等价命令：git clone https://github.com/JimmyWangJimmy/doubao-remote.git && bash doubao-remote/install.sh
 
-# 1) 带调试端口启动豆包（只需一次，或交给 doubao_desktop_ensure）
-open -a Doubao --args --remote-debugging-port=9333
+# 2) 确认
+doubao status          # 期望 "ok": true
 
-# 2) 起 MCP 服务（Node ≥ 21，零依赖）
-node src/server.js
-# doubao-remote listening on http://127.0.0.1:18812/mcp (tools: 23)
-
-# 3) 验证（会真的往豆包发一条「只回答两个字：收到」）
-node scripts/smoke.js
+# 3) 试一下
+doubao ask "用一句话介绍你自己"
 ```
 
-> 想常驻：把 `launchd/com.jimmy.doubao-remote.plist` 里的 `__REPO__` 换成仓库绝对路径，放进 `~/Library/LaunchAgents/`，然后
-> `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.jimmy.doubao-remote.plist`
+装完就可用，**不需要开启任何服务**。两个可选开关：
+
+| 加这个参数 | 作用 |
+|---|---|
+| `--skill` | 把技能装进 Agent 目录（`~/.agents/skills/doubao-desktop`） |
+| `--service` | 装 launchd 常驻，MCP 端点 `http://127.0.0.1:18812/mcp` 长期在线（复杂任务或纯 MCP 宿主才需要） |
+
+> 想从源码跑、或改代码：见下面「从源码跑」折叠块（注意 18812 被占用时不要起第二个实例）。
 
 ## 接入客户端
 
