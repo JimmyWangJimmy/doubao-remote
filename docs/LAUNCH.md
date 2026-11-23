@@ -92,71 +92,49 @@
 
 ## 4. 可直接复制的文案
 
-### X / Twitter（英文）
+> 规则：**两句话，第二句是链接**。第一句讲"它做了什么我做不到的事"，第二句给出口。
+> 不要形容词，不要"强大的""全新的"，不要罗列特性。
 
+### 中文（即刻 / 微博 / 群）
+
+**A（推荐）**
 ```
-Doubao (豆包) desktop has no API. So I gave it one — over Chromium DevTools.
+让 AI 自己用豆包：说一句「画只赛博朋克猫」，它自己输入、发送、把图存进我文件夹。
+一条命令装完，Mac 能用 → github.com/JimmyWangJimmy/doubao-remote
+```
 
-Now Claude Code / Cursor / any MCP client can make it write, draw, and switch models:
+**B（更直白）**
+```
+豆包桌面端没有 API，所以我给它开了一个，现在 Claude Code 能直接指挥它干活、出图。
+一条命令：github.com/JimmyWangJimmy/doubao-remote
+```
 
-  doubao ask "画一张赛博朋克猫" 180000
-  doubao images 1
+**C（最短，适合评论区）**
+```
+把豆包接进了 Claude Code，它能自己开豆包、发消息、把图存下来。github.com/JimmyWangJimmy/doubao-remote
+```
 
-Skill-first install, zero config. macOS. 23 tools, 28/28 smoke tests.
-https://github.com/JimmyWangJimmy/doubao-remote
+### 英文（X）
+```
+Doubao desktop has no API — it's a Chromium shell, so I opened a debug port and now Claude Code can drive it.
+One command, macOS: github.com/JimmyWangJimmy/doubao-remote
 ```
 
 ### Hacker News（Show HN）
 
+标题：`Show HN: Doubao Remote – drive a desktop app that has no API`
+
+正文（三段，仍然克制）：
 ```
-Show HN: Doubao Remote – drive the Doubao desktop app over DevTools
+Doubao is ByteDance's assistant app. It ships no local API, but it's a Chromium shell,
+so --remote-debugging-port gives you the full CDP surface.
 
-Doubao is ByteDance's assistant app (China-only, desktop). It ships no local API,
-but it's a Chromium shell, so `--remote-debugging-port` gives you the full CDP surface.
+I wrapped that into a CLI and an MCP server: chat, image generation (and pulling the
+files out), model switching, skills, navigation. No cloud keys, it drives the app you
+already have open.
 
-I wrapped that into 23 tools exposed two ways: a `doubao` CLI (no server, no config)
-and an MCP server for clients that can only speak MCP. Chat, image generation, model
-switching, skills, navigation — all through the real UI, no cloud keys involved.
-
-Trickier bits: JS .click() doesn't work on its menus (needs Input.dispatchMouseEvent),
-overlays must be read by text-diffing body.innerText, and "reply finished" needs
-filtering of intermediate states. Notes in docs/PITFALLS.md.
-
-macOS only for now; Windows port needs three OS-specific calls swapped.
-```
-
-### V2EX（中文）
-
-```
-标题：[分享创造] 把豆包桌面端变成了 Agent 能调的工具（MCP + CLI）
-
-正文：
-豆包桌面端没有开放接口，但它是个 Chromium 壳。
-用 --remote-debugging-port 起起来，就能拿到完整的 DevTools 协议。
-我把这套东西包成了 23 个工具，两种用法：
-- doubao 命令：一条命令装完，不需要开服务、不需要改配置
-- MCP：给没有 shell 的客户端用
-
-能干什么：发消息取回复、让它画图并把图抓到本地、切模型、用技能、看会话、截图。
-
-踩到的坑都写进 docs/PITFALLS.md 了（JS click 无效、面板读取、hover-only 控件……）。
-macOS 可用，Windows 在做。
-
-https://github.com/JimmyWangJimmy/doubao-remote
-```
-
-### 即刻（中文，短）
-
-```
-把豆包桌面端变成了"能被 AI 指挥"的工具。
-
-说一句「让豆包画一张紫罗兰短发少女」，它自己打开豆包、输入、发送、等画完，
-再把图存到我文件夹里。全程不用我点。
-
-原理不复杂：豆包是 Chromium 壳，开个调试端口就能被驱动。
-装起来就一条命令，Mac 可用。
-
-https://github.com/JimmyWangJimmy/doubao-remote
+macOS only for now. Notes on what broke (JS .click() is ignored, overlays need text
+diffing) are in docs/PITFALLS.md.
 ```
 
 ### 小红书 / 知乎 标题备选
