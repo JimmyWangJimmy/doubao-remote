@@ -1,5 +1,7 @@
 # 能力矩阵（实测）
 
+![能力一览](assets/capabilities.png)
+
 环境：macOS · Doubao.app 2.37.12（`com.bot.pc.doubao`）· 内核 `Chrome/147.0.7727.149` · 账号为「学生免费版」
 采集方式：`doubao-remote` 的 `snapshot` / 文本 diff 面板读取 / 真实鼠标点击，逐项记录于 `docs/smoke.json`。
 
