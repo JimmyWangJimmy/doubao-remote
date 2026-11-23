@@ -4,18 +4,18 @@
 
 | 平台 | 状态 | 说明 |
 |---|---|---|
-| **macOS 12+** | ✅ 已支持 | 当前唯一受支持平台，28/28 冒烟全绿 |
-| **Windows** | 🚧 开发中 | 需替换三处平台相关实现，见下 |
+| **macOS 12+** | ✅ 已支持 | 主平台，28/28 冒烟全绿 |
+| **Windows 11** | ✅ 已支持 | 26/28 通过 + 2 项因无生成图样本跳过（豆包 2.35.12 实测），见 [WINDOWS.md](WINDOWS.md) |
 
-### Windows 版要改的三处
+### Windows 版落地时替换的三处
 
-| 现在（macOS） | Windows 对应 |
-|---|---|
-| `open -a Doubao --args --remote-debugging-port=9333` | `Start-Process` 传参启动豆包（`Doubao.exe` + `--remote-debugging-port`） |
-| `osascript -e 'tell application "Doubao" to quit'` | `Stop-Process` / `taskkill` 关闭豆包 |
-| `pgrep -f Doubao.app/...` | `tasklist` / `Get-Process Doubao` 探测进程 |
+| 原（macOS） | Windows 实现 | 位置 |
+|---|---|---|
+| `open -a Doubao --args --remote-debugging-port=9333` | `spawn(Doubao.exe, --remote-debugging-port=N)` + `findWindowsAppPath()` | `src/tools.js` `launchApp()` |
+| `osascript -e 'tell application "Doubao" to quit'` | `taskkill /IM Doubao.exe /F /T` | `src/tools.js` `quitApp()` |
+| `pgrep -f Doubao.app/...` | `tasklist /FI "IMAGENAME eq Doubao.exe" /FO CSV /NH` | `src/tools.js` `pids()` |
 
-其余部分（CDP 协议、选择器、23 个工具、CLI、Skill）与平台无关，可原样复用；`install.sh` 需要一份 PowerShell 等价物。
+配套改动：`install.sh` 的 PowerShell 等价物 [install.ps1](../install.ps1)；`bin/doubao.js` 的 `service stop` 改用 `netstat` + `taskkill`；选择器支持多版本候选。其余部分（CDP 协议、23 个工具、CLI、Skill）与平台无关，原样复用。
 
 ## 功能
 

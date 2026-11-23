@@ -23,6 +23,8 @@
     "chromium",
     "automation",
     "macos",
+    "windows",
+    "powershell",
     "skill"
   ],
   "license": "MIT",

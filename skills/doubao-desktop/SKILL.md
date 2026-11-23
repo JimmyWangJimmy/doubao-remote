@@ -1,28 +1,35 @@
 ---
 name: doubao-desktop
-description: 驱动本机安装的豆包桌面端（/Applications/Doubao.app）：发消息取回复、抓生成图、切模型、调技能、开会话、截图、上传附件。当用户说「让豆包去做 X」「用豆包出图」「问豆包一句话」「看豆包当前界面」「在豆包里开个新对话」时使用。自带安装器与自动路由：简单任务直接跑 doubao 命令，复杂任务自己拉起 MCP，用户不需要知道底层。反触发：云端 Ark / Seedream 走 arkcli；MiniMax Design 出图走 minimax-design MCP。
+description: 驱动本机安装的豆包桌面端（macOS /Applications/Doubao.app，Windows Doubao.exe）：发消息取回复、抓生成图、切模型、调技能、开会话、截图、上传附件。当用户说「让豆包去做 X」「用豆包出图」「问豆包一句话」「看豆包当前界面」「在豆包里开个新对话」时使用。自带安装器与自动路由：简单任务直接跑 doubao 命令，复杂任务自己拉起 MCP，用户不需要知道底层。反触发：云端 Ark / Seedream 走 arkcli；MiniMax Design 出图走 minimax-design MCP。
 metadata:
   requires:
     bins: ["node", "curl"]
     node: ">=21"
-  os: ["darwin"]
+  os: ["darwin", "win32"]
 ---
 
 # 豆包遥控器 · doubao-desktop
 
-你有一个命令：`doubao`。它能操作**本机**的豆包桌面端（macOS）。
+你有一个命令：`doubao`。它能操作**本机**的豆包桌面端（macOS 与 Windows 均已支持）。
 对外只有一句话：**「我让豆包去做」**。CDP、端口、MCP 这些词不出现在用户面前。
 
 ## 0. 自检（每个会话最多一次）
 
 ```bash
-command -v doubao >/dev/null || bash <(curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh)
-# raw.githubusercontent.com 连不上时用等价命令：
-#   git clone https://github.com/JimmyWangJimmy/doubao-remote.git && bash doubao-remote/install.sh
 doubao status        # 期望 "ok": true
 ```
 
+装不上时按平台补装（装完即用，不开服务）：
+
+```bash
+# macOS
+command -v doubao >/dev/null || bash <(curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh)
+# Windows（PowerShell）
+#   powershell -ExecutionPolicy Bypass -File install.ps1        # 加了 -Skill / -Service / -All 见 README
+```
+
 `ok: false` 且 `devtools.error` 有值 → 先 `doubao ensure`（会重启豆包；用户正在输入时先问一句）。
+Windows 还有一条：豆包被手动关掉再开时调试端口会丢，下次用前先 `doubao ensure`。
 
 ## 1. 任务路由（先判类型，再选通道）
 
@@ -41,7 +48,7 @@ doubao status        # 期望 "ok": true
 ## 2. 对用户怎么说话
 
 - ❌ 不说：MCP 没启动、端口占用、CDP 断了、需要你配置一下
-- ✅ 要说：已经在豆包里问它了 / 图画好了，存在 `~/Pictures/doubao-desktop/` / 豆包那边还在画，等我一下
+- ✅ 要说：已经在豆包里问它了 / 图画好了，存在 `~/Pictures/doubao-desktop/`（Windows：`%USERPROFILE%\Pictures\doubao-desktop\`）/ 豆包那边还在画，等我一下
 - 只有真的需要用户动手时，才用一句人话说清楚：要登录、要升级订阅（高级模型）、额度不够
 - 服务开没开、走的哪条通道，都是你的内部决定，不解释
 
@@ -83,12 +90,14 @@ doubao images 1        # → ~/Pictures/doubao-desktop/img-*.png
 
 | 现象 | 处理 |
 |---|---|
-| `command not found: doubao` | 跑第 0 步 |
-| `ok: false` + devtools 报错 | `doubao ensure`，或 `open -a Doubao --args --remote-debugging-port=9333` |
+| `command not found: doubao` | 跑第 0 步（Windows 检查 `%USERPROFILE%\.local\bin` 是否在 PATH） |
+| `ok: false` + devtools 报错 | `doubao ensure`；仍不行就手动起：macOS `open -a Doubao --args --remote-debugging-port=9333`，Windows `Start-Process Doubao.exe -ArgumentList "--remote-debugging-port=9333"` |
 | `element not found: chat_input_action_model` | 在 draft 页，先 `doubao open <会话>` |
 | `control not available: read_aloud` | 朗读按钮 hover 才挂载，重开会话再试 |
 | `timed_out: true` | 别重发，`doubao replies 1` 续读 |
 | 面板读到空 | 面板原本就开着，点击把它关了；先 `doubao screenshot` 看一眼 |
 | 服务起不来 | `doubao service status` 看端口；冲突就换 `DOUBAO_DESKTOP_PORT` |
+| Windows 上 `plugins` 返回 `via: skills-page` | 正常：Windows 版工具栏没有插件按钮，插件/伙伴在「插件 · 技能 · 伙伴」页 |
+| Windows 上模型菜单只有「快速 / 专家」 | draft 页的正常表现，打开一个已有会话再读即可看到完整模型列表 |
 
 完整能力清单与 14 条踩坑见仓库 `docs/`。
