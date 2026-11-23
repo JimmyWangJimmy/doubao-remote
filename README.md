@@ -33,8 +33,6 @@
 | 📎 附件 | 「把这份 PDF 丢给它，让它总结」 |
 | 🔌 形态 | `doubao` 命令（零注册）或 MCP（给没有 shell 的客户端） |
 
-<p align="center"><img src="docs/assets/before-after.png" alt="手动六步 → 一条命令" width="900"/></p>
-
 <p align="center"><img src="docs/assets/demo.gif" alt="doubao ask → Doubao draws → images land in ~/Pictures/doubao-desktop" width="820"/></p>
 
 <p align="center"><sub>一句命令 → 豆包自己画 → 图落盘。没有脚本、没有模拟点击。</sub></p>
