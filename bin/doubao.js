@@ -10,7 +10,58 @@
  *   doubao call doubao_desktop_conversations '{"limit":5}'
  *   doubao screenshot
  */
+const { spawn, execFileSync } = require('child_process');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const http = require('http');
 const { tools } = require('../src/tools');
+
+const MCP_PORT = Number(process.env.DOUBAO_DESKTOP_PORT || 18812);
+const PLIST = path.join(os.homedir(), 'Library/LaunchAgents/com.jimmy.doubao-remote.plist');
+const SERVER = path.join(__dirname, '..', 'src', 'server.js');
+
+function portOpen(port, timeout = 800) {
+  return new Promise((resolve) => {
+    const req = http.get({ host: '127.0.0.1', port, path: '/mcp', timeout }, (res) => {
+      res.resume();
+      resolve(true);
+    });
+    req.on('timeout', () => { req.destroy(); resolve(false); });
+    req.on('error', () => resolve(false));
+  });
+}
+
+async function service(action) {
+  const running = await portOpen(MCP_PORT);
+  if (action === 'status') {
+    return { ok: true, running, port: MCP_PORT, endpoint: running ? `http://127.0.0.1:${MCP_PORT}/mcp` : null,
+      launcher: fs.existsSync(PLIST) ? 'launchd' : 'none' };
+  }
+  if (action === 'stop') {
+    if (!running) return { ok: true, stopped: 'already-stopped' };
+    try { execFileSync('launchctl', ['bootout', `gui/${process.getuid ? process.getuid() : 501}/com.jimmy.doubao-remote`], { stdio: 'ignore' }); } catch {}
+    try { execFileSync('pkill', ['-f', 'src/server.js'], { stdio: 'ignore' }); } catch {}
+    await new Promise((r) => setTimeout(r, 800));
+    return { ok: true, stopped: 'stopped', running: await portOpen(MCP_PORT) };
+  }
+  if (action === 'start') {
+    if (running) return { ok: true, running: true, started: 'already-running', endpoint: `http://127.0.0.1:${MCP_PORT}/mcp` };
+    if (fs.existsSync(PLIST)) {
+      try {
+        execFileSync('launchctl', ['bootstrap', `gui/${process.getuid ? process.getuid() : 501}`, PLIST], { stdio: 'ignore' });
+      } catch { /* already loaded */ }
+    } else {
+      spawn(process.execPath, [SERVER], { detached: true, stdio: 'ignore', env: process.env }).unref();
+    }
+    for (let i = 0; i < 25; i++) {
+      await new Promise((r) => setTimeout(r, 400));
+      if (await portOpen(MCP_PORT)) return { ok: true, running: true, started: 'started', endpoint: `http://127.0.0.1:${MCP_PORT}/mcp` };
+    }
+    return { ok: false, error: 'service did not open the port in time' };
+  }
+  return { ok: false, error: 'usage: doubao service start|stop|status' };
+}
 
 function die(msg) {
   console.error(msg);
@@ -51,6 +102,7 @@ async function call(name, args) {
   doubao skills                   read the skills panel
   doubao goto <target>            workbench|cron|skills|library|office|search|chat
   doubao call <tool> [json]       call any tool directly
+  doubao service start|stop|status  start/stop the MCP service (only for complex or non-shell hosts)
 
 env: CDP_PORT (default 9333), DOUBAO_DESKTOP_OUT (image output dir)`);
     return;
@@ -79,6 +131,11 @@ env: CDP_PORT (default 9333), DOUBAO_DESKTOP_OUT (image output dir)`);
   if (shortcuts[cmd]) {
     const [name, args] = shortcuts[cmd];
     print(await call(name, args));
+    return;
+  }
+
+  if (cmd === 'service') {
+    print(await service(rest[0] || 'status'));
     return;
   }
 

@@ -126,6 +126,14 @@ node scripts/smoke.js
 
 ## 接入客户端
 
+**先选通道，再谈配置**（Agent 侧已按这套规则自动路由，用户不需要判断）：
+
+| 你的情况 | 选哪条 |
+|---|---|
+| Agent 能跑 shell（Claude Code / Cursor / DSH / Codex） | **只装 Skill + CLI**，不开服务、不改配置。简单任务一条命令，复杂任务 Agent 会自己 `doubao service start` |
+| 宿主只能走 MCP（没有 bash） | `bash install.sh --service`，再把 `http://127.0.0.1:18812/mcp` 填进客户端 |
+| 要给别人/别的程序复用同一个连接 | 同上，MCP 更适合长连接与结构化参数 |
+
 任何支持 **streamable HTTP** 的 MCP 客户端都能直接连 `http://127.0.0.1:18812/mcp`。
 
 <details>
