@@ -11,7 +11,7 @@
 [![Tools](https://img.shields.io/badge/tools-23-blue)](#-工具参考23-个)
 [![Node](https://img.shields.io/badge/node-%E2%89%A521-339933?logo=node.js&logoColor=white)](package.json)
 [![MCP](https://img.shields.io/badge/MCP-streamable--http-8f7cff)](https://modelcontextprotocol.io)
-[![Platform](https://img.shields.io/badge/platform-macOS%2012%2B-black?logo=apple&logoColor=white)](#-限制)
+[![Platform](https://img.shields.io/badge/platform-macOS%2012%2B-black?logo=apple&logoColor=white)](#限制)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 </div>
@@ -82,7 +82,7 @@ doubao images 1        # → ~/Pictures/doubao-desktop/img-*.png
 - [能力清单](#-能力清单)
 - [冒烟测试（28 项）](#-冒烟测试28-项)
 - [故障速查](#-故障速查)
-- [限制](#-限制)
+- [限制](#限制)
 - [路线图](#-路线图)
 - [参与贡献](#-参与贡献)
 
@@ -271,7 +271,7 @@ node scripts/smoke.js      # 输出 docs/SMOKE.md + docs/smoke.json
 
 14 条完整踩坑记录：[docs/PITFALLS.md](docs/PITFALLS.md) —— 比代码更值钱。
 
-## ⚠️ 限制
+## 限制
 
 - **只支持 macOS**：依赖 `open -a` / `osascript` / `pgrep`。
 - **跟着 UI 走**：豆包改版可能让选择器失效，`npm run smoke` 用来定位断点。
@@ -297,6 +297,16 @@ node scripts/smoke.js      # 输出 docs/SMOKE.md + docs/smoke.json
 3. 提 PR 时带上 `docs/smoke.json` 的前后对比
 
 Issue 模板已备好：`.github/ISSUE_TEMPLATE/`。
+
+## 📚 文档
+
+| 文档 | 内容 |
+|---|---|
+| [docs/CAPABILITIES.md](docs/CAPABILITIES.md) | 能力清单：13 个模型、30 个内置技能、本机技能注入、全部 testid |
+| [docs/PITFALLS.md](docs/PITFALLS.md) | 14 条踩坑：真实鼠标事件、目标误配、hover-only 控件、模板转义… |
+| [docs/SMOKE.md](docs/SMOKE.md) | 28 项冒烟测试报告（原始数据 `docs/smoke.json`） |
+| [skills/doubao-desktop/SKILL.md](skills/doubao-desktop/SKILL.md) | Agent 用的 Skill：自检、任务路由、话术、故障速查 |
+| [CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md) | 怎么改、改了什么 |
 
 ## 许可
 
