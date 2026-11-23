@@ -2,11 +2,11 @@
 
 <img src="docs/assets/logo.svg" alt="logo" width="96" height="96"/>
 
-<h2 align="center">Doubao Desktop MCP</h2>
+<h2 align="center">豆包遥控器 · Doubao Remote</h2>
 
-<p><b>Drive the local Doubao desktop app (豆包.app) from any MCP client —<br/>real UI, zero cloud keys.</b></p>
+<p><b>让任意 Agent 驱动本机豆包桌面端 —— Skill 一句话装，CLI 零注册，MCP 可选。<br/>Drive the local Doubao desktop app (豆包.app) from any agent.</b></p>
 
-[![CI](https://github.com/JimmyWangJimmy/doubao-desktop-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/JimmyWangJimmy/doubao-desktop-mcp/actions/workflows/ci.yml)
+[![CI](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml/badge.svg)](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml)
 [![Smoke](https://img.shields.io/badge/smoke-28%2F28-success)](#-冒烟测试28-项)
 [![Tools](https://img.shields.io/badge/tools-23-blue)](#-工具参考23-个)
 [![Node](https://img.shields.io/badge/node-%E2%89%A521-339933?logo=node.js&logoColor=white)](package.json)
@@ -21,8 +21,8 @@
 把下面这一整段复制给你的 Agent（Claude Code / Cursor / DSH / 任意支持 MCP 的客户端），剩下的它自己会做完：
 
 ```text
-帮我安装并接入 doubao-desktop-mcp（https://github.com/JimmyWangJimmy/doubao-desktop-mcp）。
-步骤：1) 克隆到 ~/Github/doubao-desktop-mcp；2) 若豆包没带调试端口，执行
+帮我安装并接入 doubao-remote（https://github.com/JimmyWangJimmy/doubao-remote）。
+步骤：1) 克隆到 ~/Github/doubao-remote；2) 若豆包没带调试端口，执行
 open -a Doubao --args --remote-debugging-port=9333，并确认 curl -s 127.0.0.1:9333/json/version 有返回；
 3) 在后台跑 node src/server.js（MCP 端点 http://127.0.0.1:18812/mcp，Node >= 21，零依赖）；
 4) 把该端点按 streamable-http 注册成名为 doubao-desktop 的 MCP；
@@ -33,7 +33,7 @@ open -a Doubao --args --remote-debugging-port=9333，并确认 curl -s 127.0.0.1
 <summary>不想交给 Agent？人工三步走</summary>
 
 ```bash
-git clone https://github.com/JimmyWangJimmy/doubao-desktop-mcp.git && cd doubao-desktop-mcp
+git clone https://github.com/JimmyWangJimmy/doubao-remote.git && cd doubao-remote
 open -a Doubao --args --remote-debugging-port=9333
 node src/server.js        # → http://127.0.0.1:18812/mcp
 ```
@@ -43,7 +43,7 @@ node src/server.js        # → http://127.0.0.1:18812/mcp
 <summary><b>只装 Skill，不配 MCP</b>（CLI 通道，零注册）</summary>
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-desktop-mcp/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh | bash
 doubao status
 ```
 
@@ -64,7 +64,7 @@ doubao images 1        # → ~/Pictures/doubao-desktop/img-*.png
 
 把本机安装的豆包桌面端变成一套 MCP 工具：发消息、取回复、拉生成图、切模型、调技能、开会话、截图、上传附件。
 
-<img src="docs/assets/demo-chat.png" alt="doubao-desktop-mcp driving the Doubao desktop app" width="880"/>
+<img src="docs/assets/demo-chat.png" alt="doubao-remote driving the Doubao desktop app" width="880"/>
 
 </div>
 
@@ -91,7 +91,7 @@ doubao images 1        # → ~/Pictures/doubao-desktop/img-*.png
 ## 这是什么
 
 ```
-Agent  ──MCP (HTTP)──▶  doubao-desktop-mcp  ──CDP (WebSocket)──▶  豆包.app 渲染进程
+Agent  ──MCP (HTTP)──▶  doubao-remote  ──CDP (WebSocket)──▶  豆包.app 渲染进程
                         127.0.0.1:18812                           127.0.0.1:9333
 ```
 
@@ -107,22 +107,22 @@ Agent  ──MCP (HTTP)──▶  doubao-desktop-mcp  ──CDP (WebSocket)─�
 ## 快速开始
 
 ```bash
-git clone https://github.com/JimmyWangJimmy/doubao-desktop-mcp.git
-cd doubao-desktop-mcp
+git clone https://github.com/JimmyWangJimmy/doubao-remote.git
+cd doubao-remote
 
 # 1) 带调试端口启动豆包（只需一次，或交给 doubao_desktop_ensure）
 open -a Doubao --args --remote-debugging-port=9333
 
 # 2) 起 MCP 服务（Node ≥ 21，零依赖）
 node src/server.js
-# doubao-desktop-mcp listening on http://127.0.0.1:18812/mcp (tools: 23)
+# doubao-remote listening on http://127.0.0.1:18812/mcp (tools: 23)
 
 # 3) 验证（会真的往豆包发一条「只回答两个字：收到」）
 node scripts/smoke.js
 ```
 
-> 想常驻：把 `launchd/com.jimmy.doubao-desktop-mcp.plist` 里的 `__REPO__` 换成仓库绝对路径，放进 `~/Library/LaunchAgents/`，然后
-> `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.jimmy.doubao-desktop-mcp.plist`
+> 想常驻：把 `launchd/com.jimmy.doubao-remote.plist` 里的 `__REPO__` 换成仓库绝对路径，放进 `~/Library/LaunchAgents/`，然后
+> `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.jimmy.doubao-remote.plist`
 
 ## 接入客户端
 

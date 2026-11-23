@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /**
- * doubao-desktop-mcp — MCP server (Streamable HTTP, JSON replies) that drives the
+ * doubao-remote — MCP server (Streamable HTTP, JSON replies) that drives the
  * local Doubao desktop app over its Chromium DevTools endpoint.
  */
 const http = require('http');
@@ -113,5 +113,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '127.0.0.1', () => {
-  process.stderr.write(`doubao-desktop-mcp listening on http://127.0.0.1:${PORT}/mcp (tools: ${Object.keys(tools).length})\n`);
+  process.stderr.write(`doubao-remote listening on http://127.0.0.1:${PORT}/mcp (tools: ${Object.keys(tools).length})\n`);
 });

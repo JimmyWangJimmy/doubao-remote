@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# doubao-desktop-mcp installer — puts the CLI on PATH, optionally starts the MCP
+# doubao-remote installer — puts the CLI on PATH, optionally starts the MCP
 # server as a launchd service and installs the Agent skill.
 #
 #   bash install.sh              # CLI only
@@ -10,8 +10,8 @@
 # Works both from a checkout and via: curl -fsSL <raw install.sh> | bash
 set -euo pipefail
 
-REPO_URL="https://github.com/JimmyWangJimmy/doubao-desktop-mcp.git"
-INSTALL_DIR="${DOUBAO_MCP_HOME:-$HOME/.local/share/doubao-desktop-mcp}"
+REPO_URL="https://github.com/JimmyWangJimmy/doubao-remote.git"
+INSTALL_DIR="${DOUBAO_MCP_HOME:-$HOME/.local/share/doubao-remote}"
 BIN_DIR="${DOUBAO_BIN_DIR:-$HOME/.local/bin}"
 SKILL_DIR="${DOUBAO_SKILL_DIR:-$HOME/.agents/skills}"
 MCP_PORT="${DOUBAO_DESKTOP_PORT:-18812}"
@@ -93,10 +93,10 @@ fi
 
 # ---------- 5. service
 if [ "$DO_SERVICE" = 1 ]; then
-  PLIST="$HOME/Library/LaunchAgents/com.jimmy.doubao-desktop-mcp.plist"
+  PLIST="$HOME/Library/LaunchAgents/com.jimmy.doubao-remote.plist"
   mkdir -p "$SRC/var"
-  sed "s#__REPO__#$SRC#g" "$SRC/launchd/com.jimmy.doubao-desktop-mcp.plist" > "$PLIST"
-  launchctl bootout "gui/$(id -u)/com.jimmy.doubao-desktop-mcp" 2>/dev/null || true
+  sed "s#__REPO__#$SRC#g" "$SRC/launchd/com.jimmy.doubao-remote.plist" > "$PLIST"
+  launchctl bootout "gui/$(id -u)/com.jimmy.doubao-remote" 2>/dev/null || true
   launchctl bootstrap "gui/$(id -u)" "$PLIST"
   say "launchd service loaded (port $MCP_PORT)"
 fi
@@ -117,5 +117,5 @@ Done.
   MCP      : http://127.0.0.1:$MCP_PORT/mcp   (streamable-http)
   App      : open -a Doubao --args --remote-debugging-port=$CDP_PORT
   Skill    : ${SKILL_DIR}/doubao-desktop  (run with --skill)
-  Service  : ~/Library/LaunchAgents/com.jimmy.doubao-desktop-mcp.plist  (run with --service)
+  Service  : ~/Library/LaunchAgents/com.jimmy.doubao-remote.plist  (run with --service)
 EOF

@@ -21,7 +21,7 @@ metadata:
 ## 0. 自检与安装（只做一次）
 
 ```bash
-command -v doubao || bash <(curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-desktop-mcp/main/install.sh)
+command -v doubao || bash <(curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh)
 doubao status          # 期望 "ok": true
 ```
 

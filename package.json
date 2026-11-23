@@ -1,17 +1,38 @@
 {
-  "name": "doubao-desktop-mcp",
+  "name": "doubao-remote",
   "version": "2.0.0",
-  "description": "MCP server that drives the local Doubao desktop app over its Chromium DevTools endpoint",
+  "description": "豆包遥控器 — drive the local Doubao desktop app from any agent (Skill / CLI / MCP)",
   "type": "commonjs",
   "main": "src/server.js",
-  "bin": { "doubao-desktop-mcp": "src/server.js" },
-  "engines": { "node": ">=21" },
+  "bin": {
+    "doubao-remote": "src/server.js"
+  },
+  "engines": {
+    "node": ">=21"
+  },
   "scripts": {
     "start": "node src/server.js",
     "smoke": "node scripts/smoke.js",
     "probe": "node scripts/cdp-probe.js"
   },
-  "keywords": ["mcp", "doubao", "cdp", "chromium", "automation", "macos"],
+  "keywords": [
+    "mcp",
+    "doubao",
+    "remote",
+    "cdp",
+    "chromium",
+    "automation",
+    "macos",
+    "skill"
+  ],
   "license": "MIT",
-  "files": ["src", "scripts", "skills", "docs", "launchd", "README.md", "SKILL.md"]
+  "files": [
+    "src",
+    "scripts",
+    "skills",
+    "docs",
+    "launchd",
+    "README.md",
+    "SKILL.md"
+  ]
 }
