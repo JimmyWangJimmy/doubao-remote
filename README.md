@@ -108,6 +108,7 @@ node src/server.js                                   # → http://127.0.0.1:1881
 | [docs/SMOKE.md](docs/SMOKE.md) | 28 项冒烟报告 |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 待办与不做的事 |
 | [skills/doubao-desktop/SKILL.md](skills/doubao-desktop/SKILL.md) | Agent 用的 Skill |
+| [docs/LAUNCH.md](docs/LAUNCH.md) | 推广手册：渠道矩阵、可直接复制的文案、目录提交清单 |
 | [CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md) | 怎么改、改了什么 |
 
 ## 许可

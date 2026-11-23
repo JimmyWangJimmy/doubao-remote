@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.JimmyWangJimmy/doubao-remote",
+  "description": "Drive the local Doubao (豆包) desktop app over Chromium DevTools: chat, image generation, model switching, skills, navigation. macOS.",
+  "version": "2.0.0",
+  "repository": {
+    "url": "https://github.com/JimmyWangJimmy/doubao-remote",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "doubao-remote",
+      "version": "2.0.0",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}
