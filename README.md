@@ -33,7 +33,9 @@
 | 📎 附件 | 「把这份 PDF 丢给它，让它总结」 |
 | 🔌 形态 | `doubao` 命令（零注册）或 MCP（给没有 shell 的客户端） |
 
-<p align="center"><img src="docs/assets/demo-chat.png" alt="doubao-remote driving the Doubao desktop app" width="820"/></p>
+<p align="center"><img src="docs/assets/demo.gif" alt="doubao ask → Doubao draws → images land in ~/Pictures/doubao-desktop" width="820"/></p>
+
+<p align="center"><sub>一句命令 → 豆包自己画 → 图落盘。没有脚本、没有模拟点击。</sub></p>
 
 不需要云端 API key，跑的是你自己的豆包账号与额度。
 
