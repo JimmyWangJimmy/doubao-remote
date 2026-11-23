@@ -11,11 +11,13 @@
 [![Tools](https://img.shields.io/badge/tools-23-blue)](docs/TOOLS.md)
 [![Node](https://img.shields.io/badge/node-%E2%89%A521-339933?logo=node.js&logoColor=white)](package.json)
 [![MCP](https://img.shields.io/badge/MCP-streamable--http-8f7cff)](https://modelcontextprotocol.io)
-[![Platform](https://img.shields.io/badge/platform-macOS%2012%2B-black?logo=apple&logoColor=white)](docs/ROADMAP.md)
+[![Platform](https://img.shields.io/badge/platform-macOS%2012%2B%20%7C%20Windows%2011-black)](docs/WINDOWS.md)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![doubao-remote MCP server](https://glama.ai/mcp/servers/JimmyWangJimmy/doubao-remote/badges/score.svg)](https://glama.ai/mcp/servers/JimmyWangJimmy/doubao-remote)
 
-<p><b>macOS 12+ ✅ 已支持 &nbsp;·&nbsp; Windows 🚧 开发中</b></p>
+<p><b>macOS 12+ ✅ 已支持 &nbsp;·&nbsp; Windows 11 ✅ 已支持 &nbsp;·&nbsp; 其余平台未测试</b></p>
+
+<p><sub>一条命令，装之前自动认出你的系统</sub></p>
 
 </div>
 
@@ -39,18 +41,43 @@
 
 不需要云端 API key，跑的是你自己的豆包账号与额度。
 
-## 开始
+## 平台支持
 
-### 交给 Agent（推荐）
+两个平台能力对等，差异只在"入口在哪"。完整说明见 [docs/WINDOWS.md](docs/WINDOWS.md)。
+
+| 能力 | macOS 12+ | Windows 11 | 备注 |
+|---|---|---|---|
+| 对话 / 读回复 | ✅ | ✅ | |
+| 出图 / 抓图 | ✅ | ⚠️ 未实测 | 需要历史生成图样本，选择器同源 |
+| 切模型（13 档 + 推理强度） | ✅ | ✅ | Windows 的空会话里只显示「快速 / 专家」，打开已有会话才有完整列表 |
+| 技能面板 | ✅ | ✅ | |
+| 插件 / 伙伴 | ✅ | ✅ | Windows 的工具栏没有插件按钮，工具改从「插件 · 技能 · 伙伴」页读取 |
+| 会话 / 导航 / 搜索 / 上传 / 截图 | ✅ | ✅ | |
+| MCP 常驻 | ✅ launchd | ✅ 登录任务或启动文件夹 | 非管理员时自动回退到启动文件夹 |
+| 自带冒烟 | 28/28 | 26/28 + 2 项无样本跳过 | `npm run smoke` |
+
+### 先确认你的是什么系统
+
+| 平台 | 状态 | 一行安装 | 装完可用 |
+|---|---|---|---|
+| **macOS 12+** | ✅ 已支持 | `curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh \| bash` | ✅ 28/28 冒烟 |
+| **Windows 11** | ✅ 已支持 | `irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.ps1 \| iex` | ✅ 26/28 + 2 项无样本跳过 |
+
+> 两个安装器都带平台识别：`install.sh` 在 Git Bash 里跑会自动转交 `install.ps1`，`install.ps1` 在非 Windows 上会提示改用 `install.sh`。**复制错一行也不会装坏。**
+
+### 或者交给 Agent（零选择，最省事）
 
 ```text
 帮我装好「豆包遥控器」并接上：https://github.com/JimmyWangJimmy/doubao-remote
 按 README 的「开始」装，跑 doubao status 确认 "ok": true，之后我用「让豆包去做…」直接使唤它。细节不用问我。
 ```
 
-### 自己手动两条
+Agent 会自己判断你是 macOS 还是 Windows 并选对应的安装器。
+
+### 手动装（一行）
 
 ```bash
+# macOS 12+（终端）
 curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh | bash
 # 国内 raw 偶尔被重置，等价命令：
 #   git clone https://github.com/JimmyWangJimmy/doubao-remote.git && bash doubao-remote/install.sh
@@ -59,20 +86,33 @@ doubao status        # 期望 "ok": true
 doubao ask "用一句话介绍你自己"
 ```
 
-安装器做四件事：装 `doubao` 到 `~/.local/bin`、带调试端口拉起豆包、自检、打印下一步。
+```powershell
+# Windows 11（PowerShell，先装 Node ≥ 21：winget install OpenJS.NodeJS.LTS）
+irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.ps1 | iex
+
+doubao status        # 期望 "ok": true
+doubao ask "用一句话介绍你自己"
+```
+
+> Windows 也可以 `git clone` 之后双击 `install.cmd`，或 `powershell -ExecutionPolicy Bypass -File .\install.ps1`。
+
+两个平台的安装器做同样四件事：装 `doubao` 到用户 bin 目录、带调试端口拉起豆包、自检、打印下一步。
 装完即可用，**不需要开启任何服务**。两个可选开关：
 
-| 参数 | 作用 |
-|---|---|
-| `--skill` | 把技能装进 Agent 目录（`~/.agents/skills/doubao-desktop`） |
-| `--service` | launchd 常驻，MCP 端点 `http://127.0.0.1:18812/mcp` 长期在线（复杂任务或纯 MCP 宿主才需要） |
+| 参数 | macOS / Linux | Windows | 作用 |
+|---|---|---|---|
+| 装 Agent 技能 | `--skill` | `-Skill` | 把技能装进 `~/.agents/skills/doubao-desktop`（Windows：`%USERPROFILE%\.agents\skills`） |
+| 常驻 MCP | `--service` | `-Service` | `http://127.0.0.1:18812/mcp` 长期在线（复杂任务或纯 MCP 宿主才需要）；macOS 用 launchd，Windows 用登录任务或启动文件夹 |
+| 全都要 | `--all` | `-All` | 等价于上面两个 |
+
+> Windows 的安装细节、平台差异与已知限制见 [docs/WINDOWS.md](docs/WINDOWS.md)。
 
 <details>
 <summary>从源码跑（开发者 / 想改代码）</summary>
 
 ```bash
 git clone https://github.com/JimmyWangJimmy/doubao-remote.git && cd doubao-remote
-open -a Doubao --args --remote-debugging-port=9333   # 只需一次
+open -a Doubao --args --remote-debugging-port=9333   # macOS，只需一次；Windows 用 doubao ensure
 node src/server.js                                   # → http://127.0.0.1:18812/mcp
 ```
 
@@ -109,6 +149,7 @@ node src/server.js                                   # → http://127.0.0.1:1881
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | 模块职责与数据流 |
 | [docs/PITFALLS.md](docs/PITFALLS.md) | 14 条踩坑 |
 | [docs/SMOKE.md](docs/SMOKE.md) | 28 项冒烟报告 |
+| [docs/WINDOWS.md](docs/WINDOWS.md) | Windows 安装、平台差异、实测结果与已知限制 |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | 待办与不做的事 |
 | [skills/doubao-desktop/SKILL.md](skills/doubao-desktop/SKILL.md) | Agent 用的 Skill |
 | [docs/LAUNCH.md](docs/LAUNCH.md) | 推广手册：渠道矩阵、可直接复制的文案、目录提交清单 |
