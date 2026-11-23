@@ -1,84 +1,94 @@
 ---
 name: doubao-desktop
-description: 用 MCP 驱动本机豆包桌面端（/Applications/Doubao.app）：发消息取回复、抓生成图、切模型、调技能、开会话、截图、上传附件。当用户要求「让豆包去做 X」「用豆包出图」「问豆包一句话」「看豆包当前界面」「在豆包里开个新对话」时使用。反触发：云端 Ark / Seedream API 出图走 arkcli；MiniMax Design 出图走 minimax-design 的 MCP。
+description: 驱动本机安装的豆包桌面端（/Applications/Doubao.app）：发消息取回复、抓生成图、切模型、调技能、开会话、截图、上传附件。当用户说「让豆包去做 X」「用豆包出图」「问豆包一句话」「看豆包当前界面」「在豆包里开个新对话」时使用。自带安装器：本机没有 doubao 命令时先跑一次 bootstrap.sh 即可，无需手动装 MCP。反触发：云端 Ark / Seedream 走 arkcli；MiniMax Design 出图走 minimax-design MCP。
+metadata:
+  requires:
+    bins: ["node", "curl"]
+    node: ">=21"
+  os: ["darwin"]
 ---
 
 # doubao-desktop
 
-驱动**本机**的豆包桌面端，走它自带的 Chromium DevTools 协议（`127.0.0.1:9333`），MCP 端点在 `http://127.0.0.1:18812/mcp`。
+用命令行或 MCP 驱动**本机**的豆包桌面端（macOS，`/Applications/Doubao.app`）。
+两条通道能力完全一致，选一条即可：
 
-## 开工顺序
-
-1. `doubao_desktop_status` —— 看 app 是否在跑、调试端口是否可用、当前页面是什么。
-2. 如果 `devtools.error` 不为空 → `doubao_desktop_ensure`（会**重启豆包**，未发送的输入会丢，先确认用户没在打字）。
-3. `doubao_desktop_snapshot` —— 拿页面 + 已打开面板的快照，决定下一步。
-
-## 常见任务的正确姿势
-
-### 让豆包回答 / 生成内容
-
-```
-doubao_desktop_ask({ text: "...", timeout_ms: 120000 })
-```
-
-- 返回 `reply`（文本）和 `images`（图片 URL）。
-- `timed_out: true` 说明到点还没稳定下来，**不要重发**（会变成两条提问）；改用 `doubao_desktop_replies({limit:1})` 再读。
-- 出图通常 30–60 秒，`timeout_ms` 给 120000 起。
-
-### 把生成图取到本地
-
-```
-doubao_desktop_images({ limit: 1 })   // 下载到 ~/Pictures/doubao-desktop/
-```
-
-图在回复的 `message_image_content` 里，**带「豆包AI生成」水印**。要更高清的同时会有缩略图 URL，两个都会下载。
-
-### 换模型 / 用技能
-
-```
-doubao_desktop_models()                       // 先枚举真实可用的
-doubao_desktop_set_model({ name: "豆包 2.1 Pro" })
-doubao_desktop_skills()                       // 快捷功能 6 + 内置技能 30 + 本机技能
-doubao_desktop_toggle_skill({ name: "地图" })
-```
-
-⚠️ 模型 / 技能 / 插件这些 chip **只在已有消息的会话里存在**。draft 页会报 `element not found` —— 先 `doubao_desktop_open_conversation` 或 `doubao_desktop_new_chat` 后发一条消息，再操作。
-
-### 换会话 / 找历史
-
-```
-doubao_desktop_conversations({ limit: 30 })
-doubao_desktop_open_conversation({ title: "介绍自己" })   // 子串匹配
-```
-
-### 附件
-
-```
-doubao_desktop_upload_file({ paths: ["/abs/file.pdf"], then_send: "总结这份文档" })
-```
-
-`paths` 必须是绝对路径且存在；不传 `then_send` 就只挂附件不发。
-
-### 看界面 / 一般操作
-
-- 截图：`doubao_desktop_screenshot()`
-- 任何没有专门工具的控件：`doubao_desktop_click({ testid | selector | text })` + `doubao_desktop_press({key:"Escape"})`
-- 读不到结构时：`doubao_desktop_eval({ expression: "..." })`（返回值要可 JSON 序列化）
-
-## 硬规则
-
-1. **不要用 JS `.click()` 代替 `doubao_desktop_click`**：豆包的菜单对合成 click 无反应，必须真实鼠标事件。
-2. **耗时动作后先 snapshot**：导航、分享、朗读都可能把输入区 chip 弄没，重新开一次会话再继续。
-3. **每条消息都是真实消费**：账号与额度是用户的，出图一次约 12.70 点。批量/重试前先看界面上的消耗提示。
-4. **不要并发**：同一个 webview 只有一个焦点，串行调用；并行会互相抢焦点、点错目标。
-5. **改版即失效**：选择器集中在 `src/selectors.js`，豆包升级后先跑 `scripts/smoke.js` 定位断点。
-
-## 故障速查
-
-| 现象 | 原因 | 处理 |
+| 通道 | 前提 | 调用形态 |
 |---|---|---|
-| `element not found: [data-testid=chat_input_action_model]` | 在 draft 页 | 先开一个已有会话 |
-| `no Doubao page target` | app 没带调试端口 | `doubao_desktop_ensure` |
-| `control not available: read_aloud` | 朗读按钮只在 hover 后挂载，且最后一条可能是纯图片回复 | 重开会话重试，或 `message_action more` 后再点 |
-| 面板读取为空 | 面板本来就开着，点击把它关了 | 工具已内置 Escape 重试；仍失败就 snapshot 看一眼 |
-| `timed_out: true` | 生成慢 | 不要重发，用 `replies` 续读 |
+| **CLI**（默认，零配置） | `doubao` 命令在 PATH | `doubao ask "…"` |
+| **MCP**（可选，给客户端用） | 已注册 `doubao-desktop`（`http://127.0.0.1:18812/mcp`） | `doubao_desktop_ask({text})` |
+
+## 0. 自检与安装（只做一次）
+
+```bash
+command -v doubao || bash <(curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-desktop-mcp/main/install.sh)
+doubao status          # 期望 "ok": true
+```
+
+若本 skill 目录里有 `bootstrap.sh`，也可以直接 `bash bootstrap.sh`（等价）。
+**不要**让用户手动 clone / 起服务 / 改配置——安装器会处理：装 CLI、带调试端口拉起豆包、自检。
+
+`status` 返回 `ok: false` 且提示 devtools 不可用：
+
+```bash
+open -a Doubao --args --remote-debugging-port=9333   # 或 doubao ensure（会重启豆包）
+```
+
+## 1. 常用命令
+
+```bash
+doubao status                     # 进程 / 调试端口 / 当前页
+doubao ask "用一句话介绍你自己"      # 发送并等回复（默认 120s）
+doubao replies 3                  # 读最近 3 条回复
+doubao images 1                   # 下载最近 1 条回复里的图 → ~/Pictures/doubao-desktop
+doubao screenshot                 # 截图，返回路径
+doubao conversations 30           # 侧栏会话列表
+doubao open "介绍自己"              # 按标题打开会话
+doubao models                     # 模型菜单
+doubao set-model "豆包 2.1 Pro"     # 切换模型
+doubao skills                     # 技能面板（快捷功能 + 内置技能 + 本机技能）
+doubao goto workbench             # 工作台|cron|skills|library|office|search|chat
+doubao call doubao_desktop_message_action '{"action":"read_aloud"}'
+doubao list                       # 全部 23 个工具
+```
+
+一切输出都是 JSON，直接解析字段即可（`ok` / `reply` / `images` / `saved` / `error`）。
+
+出图闭环：
+
+```bash
+doubao ask "帮我画一张竖版少女立绘，紫罗兰短发，3:4" 180000
+doubao images 1          # → ~/Pictures/doubao-desktop/img-*.png
+```
+
+## 2. 用 MCP 时
+
+工具名与 CLI 子命令一一对应（`doubao_desktop_*`）。客户端里注册：
+
+```json
+{ "mcpServers": { "doubao-desktop": { "type": "http", "url": "http://127.0.0.1:18812/mcp" } } }
+```
+
+DSH 用 `@deepseek-ai/dsh-mcp-client` + `transport: streamable-http`。
+
+## 3. 硬规则
+
+1. **串行**：单个 webview 只有一个焦点，别并发调用。
+2. **先 status 再动手**：`ok: false` 时任何 `ask` 都会失败。
+3. **draft 页没有模型/技能/插件 chip**：新对话页只有「项目 / 更多」，要切模型得先 `doubao open <已有会话>` 或先发一条消息。
+4. **不要重发**：`timed_out: true` 说明慢，不是失败；用 `doubao replies 1` 续读，重发会变两条提问。
+5. **花的是用户额度**：出一张图约 12.70 点，界面会明写；别为了测试让豆包画图。
+6. **`doubao ensure` 会重启豆包**：用户正在输入时先问一句。
+
+## 4. 故障速查
+
+| 现象 | 处理 |
+|---|---|
+| `command not found: doubao` | 跑第 0 步安装 |
+| `ok: false` + `devtools` 报错 | `open -a Doubao --args --remote-debugging-port=9333`，或 `doubao ensure` |
+| `element not found: chat_input_action_model` | 在 draft 页，先 `doubao open <会话>` |
+| `control not available: read_aloud` | 朗读按钮 hover 才挂载，重开会话再试 |
+| `timed_out: true` | 别重发，`doubao replies 1` 续读 |
+| 面板读到空 | 面板原本就开着，点击把它关了；先 `doubao screenshot` 看一眼 |
+
+完整踩坑（14 条）与能力清单在仓库 `docs/`。
