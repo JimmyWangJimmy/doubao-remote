@@ -4,8 +4,7 @@
 
 <h2 align="center">豆包遥控器 · Doubao Remote</h2>
 
-<p><b>豆包能画图，但每次都要你复制、粘贴、右键另存。<br/>现在一句话，它自己画完、自己存好。</b></p>
-<p><sub>Drive the local Doubao desktop app from any agent. Skill-first install, zero config, macOS.</sub></p>
+<p><b>让任意 Agent 驱动本机豆包桌面端 —— Skill 一句话装，CLI 零注册，MCP 可选。<br/>Drive the local Doubao desktop app (豆包.app) from any agent.</b></p>
 
 [![CI](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml/badge.svg)](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml)
 [![Smoke](https://img.shields.io/badge/smoke-28%2F28-success)](docs/SMOKE.md)
