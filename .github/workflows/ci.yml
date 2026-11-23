@@ -31,3 +31,45 @@ jobs:
           test "$COUNT" -ge 20
       - name: README assets exist
         run: test -f docs/assets/demo-chat.png && test -f docs/SMOKE.md
+
+  # The Windows half cannot drive the real app on a runner, but it must at least
+  # parse, boot the MCP server and keep the tool surface intact.
+  check-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax check
+        shell: pwsh
+        run: |
+          $bad = 0
+          Get-ChildItem src/*.js, scripts/*.js | ForEach-Object {
+            node --check $_.FullName
+            if ($LASTEXITCODE -ne 0) { Write-Host "syntax error: $($_.Name)"; $bad = 1 }
+          }
+          if ($bad) { exit 1 }
+      - name: install.ps1 parses
+        shell: pwsh
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile("install.ps1", [ref]$null, [ref]$errors) | Out-Null
+          if ($errors.Count) { $errors | ForEach-Object { Write-Error $_.Message }; exit 1 }
+          Write-Host "install.ps1 parses clean"
+      - name: Boot MCP server and list tools
+        shell: pwsh
+        run: |
+          $server = Start-Process node -ArgumentList 'src/server.js' -PassThru
+          Start-Sleep -Seconds 3
+          Set-Content -Path body.json -Value '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' -Encoding ascii
+          $resp = curl.exe -s -X POST http://127.0.0.1:18812/mcp -H "Content-Type: application/json" --data-binary "@body.json"
+          $count = ($resp | ConvertFrom-Json).result.tools.Count
+          Stop-Process -Id $server.Id -Force -ErrorAction SilentlyContinue
+          Write-Host "tools: $count"
+          if ($count -lt 20) { exit 1 }
+      - name: Windows docs exist
+        shell: pwsh
+        run: |
+          if (-not (Test-Path docs/WINDOWS.md)) { throw 'docs/WINDOWS.md missing' }
+          if (-not (Test-Path install.cmd)) { throw 'install.cmd missing' }
