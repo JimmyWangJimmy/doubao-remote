@@ -24,6 +24,20 @@
 
 共性：**先让能被检索到（目录 + topics + 英文），再让能被相信（demo + 测试 + 真实截图），最后才是推广（社区发帖）。**
 
+## 1.5 当前状态（2026-11-23 已执行）
+
+| 渠道 | 状态 | 链接 / 原因 |
+|---|---|---|
+| mcp.so | ✅ 已提交 | https://github.com/chatmcp/mcpso/issues/7895 |
+| awesome-mcp-servers (punkpeye) | ✅ PR 已开 | https://github.com/punkpeye/awesome-mcp-servers/pull/20482 |
+| awesome-mcp-servers (appcypher) | ⛔ 仓库已归档 | `archived: true`，不再接受 PR |
+| Official MCP Registry | ⏸ 暂缓 | 注册表要求可安装包（npm/PyPI/OCI）或公网 remote；本项目是**本地**服务（127.0.0.1），提交会误导 |
+| Smithery | ⏸ 暂缓 | 需要公网 HTTP 端点 |
+| MCPCentral / PulseMCP / mcpservers.org | ⏳ 需人工 | 网页表单，需要账号登录 |
+| Glama.ai | 🔄 自动索引 | 已在 README 加徽章做反链 |
+
+> 结论：**能自动化的都做完了**。剩下的要么需要公网端点（本项目性质不匹配），要么需要你本人登录填表。
+
 ## 2. 平台矩阵
 
 ### 国际（GitHub 自然流量 + MCP 生态）
