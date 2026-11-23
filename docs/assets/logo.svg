@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="doubao-desktop-mcp">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8f7cff"/>
+      <stop offset="1" stop-color="#4b3fd6"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#0b0a14"/>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="none" stroke="url(#g)" stroke-width="2.5" opacity="0.9"/>
+  <path d="M30 46h44a10 10 0 0 1 10 10v18a10 10 0 0 1-10 10H46l-12 10V84h-4a10 10 0 0 1-10-10V56a10 10 0 0 1 10-10z" fill="none" stroke="url(#g)" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="44" cy="65" r="4" fill="#f4f0fb"/>
+  <circle cx="58" cy="65" r="4" fill="#f4f0fb"/>
+  <circle cx="72" cy="65" r="4" fill="#f4f0fb"/>
+  <path d="M92 34l4.5 9.5L106 48l-9.5 4.5L92 62l-4.5-9.5L78 48l9.5-4.5z" fill="#8f7cff" opacity="0.9"/>
+</svg>

@@ -1,8 +1,10 @@
 <div align="center">
 
+<img src="docs/assets/logo.svg" alt="logo" width="96" height="96"/>
+
 # Doubao Desktop MCP
 
-**Drive the local Doubao desktop app (豆包.app) from any MCP client — real UI, zero cloud keys.**
+<p><b>Drive the local Doubao desktop app (豆包.app) from any MCP client —<br/>real UI, zero cloud keys.</b></p>
 
 [![CI](https://github.com/JimmyWangJimmy/doubao-desktop-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/JimmyWangJimmy/doubao-desktop-mcp/actions/workflows/ci.yml)
 [![Smoke](https://img.shields.io/badge/smoke-28%2F28-success)](#-冒烟测试28-项)
