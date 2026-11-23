@@ -4,7 +4,8 @@
 
 <h2 align="center">豆包遥控器 · Doubao Remote</h2>
 
-<p><b>让任意 Agent 驱动本机豆包桌面端 —— Skill 一句话装，CLI 零注册，MCP 可选。<br/>Drive the local Doubao desktop app (豆包.app) from any agent.</b></p>
+<p><b>豆包能画图，但每次都要你复制、粘贴、右键另存。<br/>现在一句话，它自己画完、自己存好。</b></p>
+<p><sub>Drive the local Doubao desktop app from any agent. Skill-first install, zero config, macOS.</sub></p>
 
 [![CI](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml/badge.svg)](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml)
 [![Smoke](https://img.shields.io/badge/smoke-28%2F28-success)](docs/SMOKE.md)
@@ -21,8 +22,6 @@
 
 ---
 
-<p align="center"><img src="docs/assets/promo-banner.jpg" alt="一句话让豆包自己干活" width="900"/></p>
-
 ## 这是什么
 
 把本机安装的豆包桌面端，变成 Agent 能直接调用的一组能力：
@@ -34,6 +33,8 @@
 | 🎛️ 控制 | 「切到豆包 2.1 Lite」「打开技能面板」「去工作台」 |
 | 📎 附件 | 「把这份 PDF 丢给它，让它总结」 |
 | 🔌 形态 | `doubao` 命令（零注册）或 MCP（给没有 shell 的客户端） |
+
+<p align="center"><img src="docs/assets/before-after.png" alt="手动六步 → 一条命令" width="900"/></p>
 
 <p align="center"><img src="docs/assets/demo.gif" alt="doubao ask → Doubao draws → images land in ~/Pictures/doubao-desktop" width="820"/></p>
 
