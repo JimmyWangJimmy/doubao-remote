@@ -25,6 +25,23 @@
 
 ---
 
+## Install
+
+**macOS 12+**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh | bash
+```
+
+**Windows 11** (PowerShell)
+
+```powershell
+irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.ps1 | iex
+```
+
+Then run `doubao status` — expect `"ok": true`. No daemon, no config edits.
+Platform matrix and optional flags: [Platforms](#platforms).
+
 ## What it is
 
 Turns the Doubao desktop app already installed on your machine into a set of capabilities an agent can call directly:
@@ -57,13 +74,6 @@ Both platforms have feature parity; only the entry point differs. Details: [docs
 | Sessions / navigation / search / upload / screenshot | ✅ | ✅ | |
 | MCP daemon | ✅ launchd | ✅ logon task or Startup folder | Falls back to the Startup folder without admin rights |
 | Bundled smoke test | 28/28 | 26/28 + 2 skipped (no sample) | `npm run smoke` |
-
-### Pick your install line
-
-| Platform | Status | One-line install | After install |
-|---|---|---|---|
-| **macOS 12+** | ✅ supported | `curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh \| bash` | ✅ 28/28 smoke |
-| **Windows 11** | ✅ supported | `irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.ps1 \| iex` | ✅ 26/28 + 2 skipped (no sample) |
 
 > Both installers detect the platform: `install.sh` under Git Bash hands over to `install.ps1`, and `install.ps1` on a non-Windows host points you back to `install.sh`. **Copying the wrong line does not break anything.**
 

@@ -25,6 +25,23 @@
 
 ---
 
+## 安装
+
+**macOS 12+**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh | bash
+```
+
+**Windows 11**（PowerShell）
+
+```powershell
+irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.ps1 | iex
+```
+
+装完跑一句 `doubao status`，期望 `"ok": true`。不需要开服务、不需要改配置。
+平台能力对照与可选参数见 [平台支持](#平台支持)。
+
 ## 这是什么
 
 把本机安装的豆包桌面端，变成 Agent 能直接调用的一组能力：
@@ -57,13 +74,6 @@
 | 会话 / 导航 / 搜索 / 上传 / 截图 | ✅ | ✅ | |
 | MCP 常驻 | ✅ launchd | ✅ 登录任务或启动文件夹 | 非管理员时自动回退到启动文件夹 |
 | 自带冒烟 | 28/28 | 26/28 + 2 项无样本跳过 | `npm run smoke` |
-
-### 先确认你的是什么系统
-
-| 平台 | 状态 | 一行安装 | 装完可用 |
-|---|---|---|---|
-| **macOS 12+** | ✅ 已支持 | `curl -fsSL https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.sh \| bash` | ✅ 28/28 冒烟 |
-| **Windows 11** | ✅ 已支持 | `irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.ps1 \| iex` | ✅ 26/28 + 2 项无样本跳过 |
 
 > 两个安装器都带平台识别：`install.sh` 在 Git Bash 里跑会自动转交 `install.ps1`，`install.ps1` 在非 Windows 上会提示改用 `install.sh`。**复制错一行也不会装坏。**
 
