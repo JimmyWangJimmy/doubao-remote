@@ -7,7 +7,7 @@
 <p><b>让任意 Agent 驱动本机豆包桌面端 —— Skill 一句话装，CLI 零注册，MCP 可选。<br/>Drive the local Doubao desktop app (豆包.app) from any agent.</b></p>
 
 [![CI](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml/badge.svg)](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml)
-[![Smoke](https://img.shields.io/badge/smoke-28%2F28-success)](docs/SMOKE.md)
+[![Smoke](https://img.shields.io/badge/smoke-28%2F28%20macOS%20%C2%B7%2026%2F28%20Win-brightgreen)](docs/SMOKE.md)
 [![Tools](https://img.shields.io/badge/tools-23-blue)](docs/TOOLS.md)
 [![Node](https://img.shields.io/badge/node-%E2%89%A521-339933?logo=node.js&logoColor=white)](package.json)
 [![MCP](https://img.shields.io/badge/MCP-streamable--http-8f7cff)](https://modelcontextprotocol.io)
@@ -69,7 +69,7 @@
 
 ```text
 帮我装好「豆包遥控器」并接上：https://github.com/JimmyWangJimmy/doubao-remote
-按 README 的「开始」装，跑 doubao status 确认 "ok": true，之后我用「让豆包去做…」直接使唤它。细节不用问我。
+按 README 的「平台支持」装，跑 doubao status 确认 "ok": true，之后我用「让豆包去做…」直接使唤它。细节不用问我。
 ```
 
 Agent 会自己判断你是 macOS 还是 Windows 并选对应的安装器。
