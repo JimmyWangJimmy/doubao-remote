@@ -77,7 +77,7 @@ Both platforms have feature parity; only the entry point differs. Details: [docs
 | Capability | macOS 12+ | Windows 11 | Notes |
 |---|---|---|---|
 | Chat / read replies | ✅ | ✅ | |
-| Image generation / capture | ✅ | ⚠️ untested | Needs a generated image in history; same selectors |
+| Image generation / capture | ✅ | ⚠️ needs one real run | Same code path and selectors as macOS; the Windows test session had no generated image, so this row was never exercised. One command closes it (below) |
 | Model switching (13 models + reasoning effort) | ✅ | ✅ | Windows shows only "Fast / Expert" on an empty chat; open an existing conversation for the full list |
 | Skills panel | ✅ | ✅ | |
 | Plugins / partners | ✅ | ✅ | Windows has no plugin button in the toolbar; tools read from the "plugins · skills · partners" page instead |
@@ -86,6 +86,19 @@ Both platforms have feature parity; only the entry point differs. Details: [docs
 | Bundled smoke test | 28/28 | 26/28 + 2 skipped (no sample) | `npm run smoke` |
 
 > Both installers detect the platform: `install.sh` under Git Bash hands over to `install.ps1`, and `install.ps1` on a non-Windows host points you back to `install.sh`. **Copying the wrong line does not break anything.**
+
+**Want to turn that ⚠️ into a ✅?** On Windows:
+
+```powershell
+doubao ask "Draw a red circle on a flat background, square" 240000
+doubao images 1          # got an image → flip the row to ✅ and open a PR; nothing → paste the output in an issue
+```
+
+Or let the smoke test create the sample itself (costs one image generation):
+
+```bash
+npm run smoke -- --gen-sample
+```
 
 ### Install with comments and verification
 

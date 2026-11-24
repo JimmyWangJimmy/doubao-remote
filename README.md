@@ -76,7 +76,7 @@ irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.
 | 能力 | macOS 12+ | Windows 11 | 备注 |
 |---|---|---|---|
 | 对话 / 读回复 | ✅ | ✅ | |
-| 出图 / 抓图 | ✅ | ⚠️ 未实测 | 需要历史生成图样本，选择器同源 |
+| 出图 / 抓图 | ✅ | ⚠️ 待一次实测 | 代码路径与选择器同源，Windows 实测时会话里没有生成图样本，所以这格没跑过。补测只需一条命令（见下） |
 | 切模型（13 档 + 推理强度） | ✅ | ✅ | Windows 的空会话里只显示「快速 / 专家」，打开已有会话才有完整列表 |
 | 技能面板 | ✅ | ✅ | |
 | 插件 / 伙伴 | ✅ | ✅ | Windows 的工具栏没有插件按钮，工具改从「插件 · 技能 · 伙伴」页读取 |
@@ -85,6 +85,19 @@ irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.
 | 自带冒烟 | 28/28 | 26/28 + 2 项无样本跳过 | `npm run smoke` |
 
 > 两个安装器都带平台识别：`install.sh` 在 Git Bash 里跑会自动转交 `install.ps1`，`install.ps1` 在非 Windows 上会提示改用 `install.sh`。**复制错一行也不会装坏。**
+
+**想帮我们把上面那格 ⚠️ 变成 ✅？** 在 Windows 上跑：
+
+```powershell
+doubao ask "画一个纯色背景的红色圆形，正方形" 240000
+doubao images 1          # 能拿到图 → 把这格改成 ✅ 并提 PR；拿不到 → 把输出贴到 issue
+```
+
+或者直接让冒烟自己造样本（会消耗一次出图额度）：
+
+```bash
+npm run smoke -- --gen-sample
+```
 
 ### 手动装：带注释与验证
 
