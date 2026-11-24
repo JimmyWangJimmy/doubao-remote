@@ -115,3 +115,31 @@ plugin: ['[data-testid=general-agent-plugin-button]', '[data-testid^=plugin_]'],
 | `doubao` 在旧终端里找不到 | 用户级 PATH 已写入，重开终端 |
 | `doubao service stop` 杀不掉 | 以管理员身份重试；工具会返回 `killed: []` 表示没找到监听进程 |
 | 中文参数变成乱码/空 | 用引号包住：`doubao ask "你好"`；PowerShell 直接调用即可，不要套 `cmd /c "..."` |
+
+## 补测「出图 / 抓图」这一格（想帮忙的话）
+
+Windows 首次实测时会话里没有生成图，因此 C08（抓图）与 C28（图片进画布）被跳过——
+**跳过不等于通过**。补上只需要两步：
+
+```powershell
+# 1) 让豆包画一张（消耗一次出图额度）
+doubao ask "画一个纯色背景的红色圆形，正方形" 240000
+
+# 2) 抓取，能落地就说明这一格是通的
+doubao images 1     # → %USERPROFILE%\Pictures\doubao-desktop```
+
+或者让冒烟自己造样本（同样消耗一次额度）：
+
+```bash
+npm run smoke -- --gen-sample
+```
+
+结果两种处理：
+
+| 结果 | 怎么做 |
+|---|---|
+| 拿到图 | 把 README 平台表里那格 ⚠️ 改成 ✅，提 PR（`docs:` 前缀即可） |
+| 报错 | 把 `doubao images 1` 的完整输出 + `docs/WINDOWS.md` 里的环境信息贴到 issue |
+
+已知风险：Windows 侧是豆包 **2.35.12**，macOS 是 **2.37.12**，两者图片节点的 `data-testid`
+未必一致。选择器集中在 `src/selectors.js` 的 `replyImages`，改一行即可。

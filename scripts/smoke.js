@@ -69,6 +69,8 @@ async function conversationHasImages() {
   const [[, , ...cliArgs]] = [process.argv];
   const jsonOut = cliArgs.includes('--json') ? cliArgs[cliArgs.indexOf('--json') + 1] : 'docs/smoke.json';
   const mdOut = cliArgs.includes('--md') ? cliArgs[cliArgs.indexOf('--md') + 1] : 'docs/SMOKE.md';
+  // Opt-in: burn one image generation so C08/C28 have a sample instead of skipping.
+  const genSample = cliArgs.includes('--gen-sample');
 
   let r;
   r = await rpc('doubao_desktop_status');
@@ -100,7 +102,13 @@ async function conversationHasImages() {
   r = await rpc('doubao_desktop_conversations');
   record('C07', '会话列表读取', 'doubao_desktop_conversations', r.ok && r.count > 0, `${r.count} 条`);
 
-  const hasImgSample = await conversationHasImages();
+  let hasImgSample = await conversationHasImages();
+  if (!hasImgSample && genSample) {
+    console.log('… --gen-sample: asking Doubao to draw a tiny sample (this costs one image generation)');
+    await rpc('doubao_desktop_ask', { text: '画一个纯色背景的红色圆形，正方形，画面干净', timeout_ms: 240000 });
+    hasImgSample = await conversationHasImages();
+    console.log(`… sample ready: ${hasImgSample}`);
+  }
   r = await rpc('doubao_desktop_images', { limit: 3 });
   record('C08', '历史生成图抓取（message_image_content）', 'doubao_desktop_images',
     hasImgSample ? (r.ok && r.count > 0) : 'skip',
