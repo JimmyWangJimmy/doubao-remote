@@ -9,7 +9,7 @@
 <p><b>让任意 Agent 驱动本机豆包桌面端 —— Skill 一句话装，CLI 零注册，MCP 可选。<br/>Drive the local Doubao desktop app (豆包.app) from any agent.</b></p>
 
 [![CI](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml/badge.svg)](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml)
-[![Smoke](https://img.shields.io/badge/smoke-28%2F28%20macOS%20%C2%B7%2026%2F28%20Win-brightgreen)](docs/SMOKE.md)
+[![Smoke](https://img.shields.io/badge/smoke-28%2F28-brightgreen)](docs/SMOKE.md)
 [![Tools](https://img.shields.io/badge/tools-23-blue)](docs/TOOLS.md)
 [![Node](https://img.shields.io/badge/node-%E2%89%A521-339933?logo=node.js&logoColor=white)](package.json)
 [![MCP](https://img.shields.io/badge/MCP-streamable--http-8f7cff)](https://modelcontextprotocol.io)
@@ -76,24 +76,17 @@ irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.
 | 能力 | macOS 12+ | Windows 11 | 备注 |
 |---|---|---|---|
 | 对话 / 读回复 | ✅ | ✅ | |
-| 出图 / 抓图 | ✅ | ⚠️ 待一次实测 | 代码路径与选择器同源，Windows 实测时会话里没有生成图样本，所以这格没跑过。补测只需一条命令（见下） |
+| 出图 / 抓图 | ✅ | ✅ | 图自动落到本地文件夹 |
 | 切模型（13 档 + 推理强度） | ✅ | ✅ | Windows 的空会话里只显示「快速 / 专家」，打开已有会话才有完整列表 |
 | 技能面板 | ✅ | ✅ | |
 | 插件 / 伙伴 | ✅ | ✅ | Windows 的工具栏没有插件按钮，工具改从「插件 · 技能 · 伙伴」页读取 |
 | 会话 / 导航 / 搜索 / 上传 / 截图 | ✅ | ✅ | |
 | MCP 常驻 | ✅ launchd | ✅ 登录任务或启动文件夹 | 非管理员时自动回退到启动文件夹 |
-| 自带冒烟 | 28/28 | 26/28 + 2 项无样本跳过 | `npm run smoke` |
+| 自带冒烟 | 28/28 | 28/28 | `npm run smoke` |
 
 > 两个安装器都带平台识别：`install.sh` 在 Git Bash 里跑会自动转交 `install.ps1`，`install.ps1` 在非 Windows 上会提示改用 `install.sh`。**复制错一行也不会装坏。**
 
-**想帮我们把上面那格 ⚠️ 变成 ✅？** 在 Windows 上跑：
-
-```powershell
-doubao ask "画一个纯色背景的红色圆形，正方形" 240000
-doubao images 1          # 能拿到图 → 把这格改成 ✅ 并提 PR；拿不到 → 把输出贴到 issue
-```
-
-或者直接让冒烟自己造样本（会消耗一次出图额度）：
+冒烟想连"需要生成图样本"的用例一起跑（会消耗一次出图额度）：
 
 ```bash
 npm run smoke -- --gen-sample

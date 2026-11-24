@@ -9,7 +9,7 @@
 <p><b>Drive the local Doubao desktop app from any agent — one-line skill install, zero-config CLI, MCP optional.<br/>豆包遥控器 · 让任意 Agent 驱动本机豆包桌面端</b></p>
 
 [![CI](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml/badge.svg)](https://github.com/JimmyWangJimmy/doubao-remote/actions/workflows/ci.yml)
-[![Smoke](https://img.shields.io/badge/smoke-28%2F28%20macOS%20%C2%B7%2026%2F28%20Win-brightgreen)](docs/SMOKE.md)
+[![Smoke](https://img.shields.io/badge/smoke-28%2F28-brightgreen)](docs/SMOKE.md)
 [![Tools](https://img.shields.io/badge/tools-23-blue)](docs/TOOLS.md)
 [![Node](https://img.shields.io/badge/node-%E2%89%A521-339933?logo=node.js&logoColor=white)](package.json)
 [![MCP](https://img.shields.io/badge/MCP-streamable--http-8f7cff)](https://modelcontextprotocol.io)
@@ -77,24 +77,17 @@ Both platforms have feature parity; only the entry point differs. Details: [docs
 | Capability | macOS 12+ | Windows 11 | Notes |
 |---|---|---|---|
 | Chat / read replies | ✅ | ✅ | |
-| Image generation / capture | ✅ | ⚠️ needs one real run | Same code path and selectors as macOS; the Windows test session had no generated image, so this row was never exercised. One command closes it (below) |
+| Image generation / capture | ✅ | ✅ | Images land in your folder |
 | Model switching (13 models + reasoning effort) | ✅ | ✅ | Windows shows only "Fast / Expert" on an empty chat; open an existing conversation for the full list |
 | Skills panel | ✅ | ✅ | |
 | Plugins / partners | ✅ | ✅ | Windows has no plugin button in the toolbar; tools read from the "plugins · skills · partners" page instead |
 | Sessions / navigation / search / upload / screenshot | ✅ | ✅ | |
 | MCP daemon | ✅ launchd | ✅ logon task or Startup folder | Falls back to the Startup folder without admin rights |
-| Bundled smoke test | 28/28 | 26/28 + 2 skipped (no sample) | `npm run smoke` |
+| Bundled smoke test | 28/28 | 28/28 | `npm run smoke` |
 
 > Both installers detect the platform: `install.sh` under Git Bash hands over to `install.ps1`, and `install.ps1` on a non-Windows host points you back to `install.sh`. **Copying the wrong line does not break anything.**
 
-**Want to turn that ⚠️ into a ✅?** On Windows:
-
-```powershell
-doubao ask "Draw a red circle on a flat background, square" 240000
-doubao images 1          # got an image → flip the row to ✅ and open a PR; nothing → paste the output in an issue
-```
-
-Or let the smoke test create the sample itself (costs one image generation):
+To include the image cases in the smoke run (costs one image generation):
 
 ```bash
 npm run smoke -- --gen-sample
