@@ -1,3 +1,5 @@
+<p align="right"><a href="README.en.md">English</a> · <b>简体中文</b></p>
+
 <div align="center">
 
 <img src="docs/assets/logo.svg" alt="logo" width="96" height="96"/>
