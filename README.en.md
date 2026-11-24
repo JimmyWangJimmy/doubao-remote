@@ -25,7 +25,17 @@
 
 ---
 
-## Install
+## One-line install
+
+Paste this to your agent (Claude Code / Cursor / DSH / Codex). It detects your OS, installs, and self-checks:
+
+```text
+Install and connect Doubao Remote for me: https://github.com/JimmyWangJimmy/doubao-remote
+Follow the "Install" section of the README, then run doubao status and confirm "ok": true.
+After that I'll just say "let Doubao do …" and you drive it. Don't ask me about the internals.
+```
+
+## Install (by hand)
 
 **macOS 12+**
 
@@ -77,17 +87,7 @@ Both platforms have feature parity; only the entry point differs. Details: [docs
 
 > Both installers detect the platform: `install.sh` under Git Bash hands over to `install.ps1`, and `install.ps1` on a non-Windows host points you back to `install.sh`. **Copying the wrong line does not break anything.**
 
-### Or hand it to your agent
-
-```text
-Install and connect Doubao Remote for me: https://github.com/JimmyWangJimmy/doubao-remote
-Follow the "Platforms" section of the README, then run doubao status and confirm "ok": true.
-After that I'll just say "let Doubao do …" and you drive it. Don't ask me about the internals.
-```
-
-The agent picks the installer that matches your OS.
-
-### Install by hand
+### Install with comments and verification
 
 ```bash
 # macOS 12+ (terminal)
