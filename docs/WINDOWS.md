@@ -126,7 +126,8 @@ Windows 首次实测时会话里没有生成图，因此 C08（抓图）与 C28�
 doubao ask "画一个纯色背景的红色圆形，正方形" 240000
 
 # 2) 抓取，能落地就说明这一格是通的
-doubao images 1     # → %USERPROFILE%\Pictures\doubao-desktop```
+doubao images 1     # → %USERPROFILE%\Pictures\doubao-desktop 下的 img-*.png
+```
 
 或者让冒烟自己造样本（同样消耗一次额度）：
 
