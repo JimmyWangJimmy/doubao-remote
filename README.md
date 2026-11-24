@@ -25,7 +25,16 @@
 
 ---
 
-## 安装
+## 一句话安装
+
+把这段复制给你的 Agent（Claude Code / Cursor / DSH / Codex 都行），它会自己认系统、装好、自检：
+
+```text
+帮我装好「豆包遥控器」并接上：https://github.com/JimmyWangJimmy/doubao-remote
+按 README 的「安装」一节装，跑 doubao status 确认 "ok": true，之后我用「让豆包去做…」直接使唤它。细节不用问我。
+```
+
+## 安装（自己动手）
 
 **macOS 12+**
 
@@ -77,16 +86,7 @@ irm https://raw.githubusercontent.com/JimmyWangJimmy/doubao-remote/main/install.
 
 > 两个安装器都带平台识别：`install.sh` 在 Git Bash 里跑会自动转交 `install.ps1`，`install.ps1` 在非 Windows 上会提示改用 `install.sh`。**复制错一行也不会装坏。**
 
-### 或者交给 Agent（零选择，最省事）
-
-```text
-帮我装好「豆包遥控器」并接上：https://github.com/JimmyWangJimmy/doubao-remote
-按 README 的「平台支持」装，跑 doubao status 确认 "ok": true，之后我用「让豆包去做…」直接使唤它。细节不用问我。
-```
-
-Agent 会自己判断你是 macOS 还是 Windows 并选对应的安装器。
-
-### 手动装（一行）
+### 手动装：带注释与验证
 
 ```bash
 # macOS 12+（终端）
